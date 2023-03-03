@@ -1,4 +1,4 @@
-day,mo,yr,date,DOY,site,code,meanTempC,samplinogDate,past20dayMean
+day,mo,yr,date,DOY,site,code,meanTempC,PlantSamplingDate,past20dayMean
 9,6,2022,6/9/2022,160,bison_1,bison_1-160,21.201,Y,
 10,6,2022,6/10/2022,161,bison_1,bison_1-161,21.03975,no,
 11,6,2022,6/11/2022,162,bison_1,bison_1-162,22.44475,no,

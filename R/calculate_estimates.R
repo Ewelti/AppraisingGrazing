@@ -147,7 +147,7 @@ chem_sc <- merge(gsc,fsc,by=c("site","month"),all.x=T, all.y=T)
 ests_sco <- merge(chem_sc,ests_sc,by=c("site","month"),all.x=T, all.y=T)
 head(ests_sco)
 
-######################################## Plant chem
+######################################## soil chem
 schem <- read.csv("rawData/SoilChem.csv")
 head(schem)
 schem = subset(schem, select = -c(Number,yr,month,day,Al_ppm,Co_ppm,Fe_ppm,Mn_ppm,S_ppm,Zn_ppm))
