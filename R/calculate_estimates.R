@@ -15,7 +15,7 @@ pm$trt_site_mo <- paste(pm$trt,pm$site,pm$month)
 ests_s <- NULL
 for(i in unique(pm$trt_site_mo)){
   sub <- pm[pm$trt_site_mo == i, ]
-  ests.i <- coef(summary(lmer(g_per_m2 ~ 1 + (1|line), data = sub, )))[1,1:2]
+  ests.i <- coef(summary(lmer(g_per_m2 ~ 1 + (1|line), data = sub)))[1,1:2]
   ests.i <- data.frame(trt_site_mo = i, t(ests.i))
   ests_s <- rbind(ests_s, ests.i) ; rm(ests.i, sub)
 } ; rm(i)
@@ -26,7 +26,30 @@ colnames(ests_s)[2] ="g_per_m2_est"
 colnames(ests_s)[3] ="g_per_m2_SE"
 ests_s$month <-as.numeric(ests_s$month)
 head(ests_s)
-ests_s = subset(ests_s, select = -c(trt_site_mo))
+ests_su = subset(ests_s, select = -c(trt_site_mo))
+
+#################ring counts
+rc <- read.csv("rawData/RingCounts.csv")
+head(rc)
+rc$count <- (as.numeric(rc$count)*10)
+#calculate estimates for each site and month
+rc$site_mo <- paste(rc$site,rc$month)
+ests_rc <- NULL
+for(i in unique(rc$site_mo)){
+  sub <- rc[rc$site_mo == i, ]
+  ests.i <- coef(summary(lmer(count ~ 1 + (1|line), data = sub)))[1,1:2]
+  ests.i <- data.frame(site_mo = i, t(ests.i))
+  ests_rc <- rbind(ests_rc, ests.i) ; rm(ests.i, sub)
+} ; rm(i)
+ests_rc
+
+ests_rc[c('site', 'month')] <- str_split_fixed(ests_rc$site_mo, ' ', 2)
+colnames(ests_rc)[2] ="ghop_m2_est"
+colnames(ests_rc)[3] ="ghop_m2_SE"
+ests_rc$month <-as.numeric(ests_rc$month)
+head(ests_rc)
+ests_rc = subset(ests_rc, select = -c(site_mo))
+ests_s <- merge(ests_su,ests_rc,by=c("site","month"))
 
 #########clipbiomass
 cb <- read.csv("rawData/ClipBiomass.csv")
@@ -195,14 +218,20 @@ ests_scos <- merge(ss,ests_sco,by=c("site","month"),all.x=T, all.y=T)
 head(ests_scos)
 
 ########################################Temperature
-temp <- read.csv("outputs/Temp_past20day.csv")
+temp <- read.csv("outputs/Temp_summary.csv")
 head(temp)
 
 all_ests <- merge(temp,ests_scos,by=c("site","month"),all.x=T, all.y=T)
 head(all_ests)
+dim(all_ests)
+########################################stocking densities
+sto <- read.csv("rawdata/stocking.csv")
+head(sto)
 
-write.csv(all_ests, "outputs/SiteMonthLevel.csv")
+al_ests <- merge(sto,all_ests,by=c("site"),all.x=T, all.y=T)
+head(al_ests)
+dim(al_ests)
 
+write.csv(al_ests, "outputs/SiteMonthLevel.csv")
 
-
-
+#############################

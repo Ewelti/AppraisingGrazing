@@ -1,0 +1,16 @@
+site,bison_dens,cattle_dens,PD_pres,insecticide
+bison_1,0.014448,0,0,0
+bison_2,0.017616,0,0,0
+bison_3,0.012613,0,0,0
+ungrazed_1,0,0,0,0
+ungrazed_2,0,0,0,0
+ungrazed_3,0,0,0,0
+cattle_1,0,0.024984,0,0
+cattle_2,0,0.02974,0,0
+cattle_3,0,0.0263,0,0
+trtpd_1,0.014448,0,1,1
+trtpd_2,0.014448,0,1,1
+trtpd_3,0.014448,0,1,1
+untrtpd_1,0.017616,0,1,0
+untrtpd_2,0.012613,0,1,0
+untrtpd_3,0.012613,0,1,0
