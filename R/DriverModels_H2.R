@@ -5,11 +5,11 @@ setwd("C:/Users/elwel/OneDrive/Desktop/AppraisingGrazing")
 ##H1) Grazing will increase plant quality with smaller herbivores having larger effects 
 ##H2) All grazers will decrease ANPP, and insect herbivory will equal that of large grazer herbivory
 ##H3) Plant nutrient content will be greatest in the early season while biomass will peak mid-season
-##H4) Grasshopper densities will track plant quality and thus will be highest in the presence of large grazers
 
 ##load libraries
+#install.packages("stringr")
 library(lme4)
-
+library(stringr)
 ############################H2
 ##all data
 pm <- read.csv("rawData/PastureMeter.csv")
@@ -41,7 +41,6 @@ coefs <- data.frame(coef(summary(pmod)))
 # use normal distribution to approximate p-value
 coefs$p.z <- 2 * (1 - pnorm(abs(coefs$t.value)))
 coefs
-
 
 #calculate estimates for mo and trt combos
 pm$trt_mo <- paste(pm$trt,pm$month)
@@ -100,6 +99,5 @@ ca_ef9 <-(c$g_per_m2_est[tp$month==9])-(un$g_per_m2_est[pd$month==9])
 totCa_ef <- mean(c(ca_ef6, ca_ef7, ca_ef8, ca_ef9))
 per_Ca_ef <- totCa_ef*(0.027007931/4046.86)
 per_Ca_ef_ac_kg <- ((totCa_ef*4046.86)/0.027007931)/1000
-
 
 ####################################

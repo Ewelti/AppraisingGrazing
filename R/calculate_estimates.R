@@ -167,8 +167,27 @@ gsc[c('site', 'month')] <- str_split_fixed(gsc$site_mo,' ', 2)
 gsc = subset(gsc, select = -c(site_mo))
 
 chem_sc <- merge(gsc,fsc,by=c("site","month"),all.x=T, all.y=T)
-ests_sco <- merge(chem_sc,ests_sc,by=c("site","month"),all.x=T, all.y=T)
-head(ests_sco)
+ests_scor <- merge(chem_sc,ests_sc,by=c("site","month"),all.x=T, all.y=T)
+head(ests_scor)
+dim(ests_scor)
+###########add individual elements
+sub_g[c('site', 'month')] <- str_split_fixed(sub_g$site_mo,' ', 2)
+sub_g = subset(sub_g, select = -c(site_mo))
+rownames(sub_g) <- NULL
+colnames(sub_g)[1:8] = c("g_C", "g_N", "g_Ca", "g_K", "g_Mg", "g_Na", "g_P", "g_Si")
+sub_f[c('site', 'month')] <- str_split_fixed(sub_f$site_mo,' ', 2)
+sub_f = subset(sub_f, select = -c(site_mo))
+rownames(sub_f) <- NULL
+colnames(sub_f)[1:8] = c("f_C", "f_N", "f_Ca", "f_K", "f_Mg", "f_Na", "f_P", "f_Si")
+sub_w[c('site', 'month')] <- str_split_fixed(sub_w$site_mo,' ', 2)
+sub_w = subset(sub_w, select = -c(site_mo))
+rownames(sub_w) <- NULL
+colnames(sub_w)[1:8] = c("w_C", "w_N", "w_Ca", "w_K", "w_Mg", "w_Na", "w_P", "w_Si")
+
+ests_sco <- merge(sub_g,ests_scor,by=c("site","month"),all.x=T, all.y=T)
+ests_sco <- merge(sub_f,ests_sco,by=c("site","month"),all.x=T, all.y=T)
+ests_sco <- merge(sub_w,ests_sco,by=c("site","month"),all.x=T, all.y=T)
+dim(ests_sco)
 
 ######################################## soil chem
 schem <- read.csv("rawData/SoilChem.csv")

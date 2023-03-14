@@ -34,7 +34,7 @@ est <- scaleVars(est)
 boxplot(est$grass_PC1 ~est$trt)
 hist(est$grass_PC1)
 ##h1_g <- lmer(grass_PC1 ~ trt + soil_PC1_posOther + soil_PC2_posCN + (1|month), data = est) #
-h1_g <- lmer(grass_PC1 ~ sbison_dens + scattle_dens + sPD_pres + sinsecticide  + (1|month), data = est)
+h1_g <- lmer(grass_PC1 ~ sbison_dens + scattle_dens + sPD_pres + sinsecticide+ soil_PC1_posOther + soil_PC2_posCN  + (1|month), data = est)
 summary(h1_g)
 # extract coefficients
 coefs <- data.frame(coef(summary(h1_g)))
