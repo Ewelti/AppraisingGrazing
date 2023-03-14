@@ -63,7 +63,7 @@ summary(sem.g, standardize = "none", conserve = TRUE)
 ##################
 ## reduced grass chem model with month removed when singular
 h1_N <- lmer(g_N ~ sPD_pres + soil_PC2_posCN + (1|month), data = est)
-h1_P <- lm(lg_P ~ sPD_pres + g_N, data = est)
+h1_P <- lm(lg_P ~ sPD_pres + g_N  , data = est)
 h1_K <- lm(lg_K ~ sbison_dens + sPD_pres + lg_P, data = est)
 h1_Mg <- lmer(lg_Mg ~ sbison_dens + scattle_dens + g_N +(1|month), data = est)
 h1_Na <- lm(lg_Na ~ sbison_dens + lg_Mg, data = est)
