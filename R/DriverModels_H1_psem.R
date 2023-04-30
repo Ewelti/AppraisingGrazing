@@ -44,7 +44,6 @@ scaleVars <- function(df){
 #apply function
 est <- scaleVars(est)
 
-##models
 
 ## full grass chem model
 h1_N <- lmer(g_N ~ sbison_dens + scattle_dens + sPD_pres + sinsecticide  + soil_PC2_posCN + soil_PC1_posOther + (1|month), data = est)
@@ -80,6 +79,8 @@ summary(sem.rg, standardize = "none", conserve = TRUE)
 est$month <- as.numeric(est$month)
 
 ## reduced grass chem model with month as fixed
+################Final grass model- use this one
+
 h1_N <- lm(g_N ~ sPD_pres + soil_PC2_posCN + month, data = est)
 h1_P <- lm(lg_P ~ sPD_pres + g_N, data = est)
 h1_K <- lm(lg_K ~ sbison_dens + sPD_pres + lg_P, data = est)

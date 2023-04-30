@@ -18,6 +18,8 @@ pm <- merge(st,pm,by=c("site"),all.x=T, all.y=T)
 head(pm)
 pm$trt <- as.factor(pm$trt)
 pm$month <- as.factor(pm$month)
+pm$site <- as.factor(pm$site)
+pm$line <- as.factor(pm$line)
 
 unique(pm$trt)
 #make ungrazed the reference level
@@ -32,12 +34,26 @@ scaleVars <- function(df){
 
 #apply function
 pm <- scaleVars(pm)
+hist(log10(pm$g_per_m2))
 
-#pmod <- lmer(g_per_m2 ~ trt + (1|line:site), data = pm)
-pmod <- lmer(g_per_m2 ~ sbison_dens + scattle_dens + sPD_pres + sinsecticide + (1|line:site), data = pm)
+#pmod <- lmer(log10(g_per_m2) ~ trt + (1|line:site), data = pm)
+pmod <- lmer(log10(g_per_m2) ~ sbison_dens + scattle_dens + sPD_pres + sinsecticide + (1|line:site), data = pm)
 summary(pmod)
 # extract coefficients
 coefs <- data.frame(coef(summary(pmod)))
+# use normal distribution to approximate p-value
+coefs$p.z <- 2 * (1 - pnorm(abs(coefs$t.value)))
+coefs
+
+pds <- pm[ which(pm$trt=='untrtpd'), ]
+tpds <- pm[ which(pm$trt=='trtpd'), ]
+apds <- rbind(pds,tpds)
+apds$trt
+
+ipmod <- lmer(log10(g_per_m2) ~ sinsecticide + (1|line:site), data = apds)
+summary(ipmod)
+# extract coefficients
+coefs <- data.frame(coef(summary(ipmod)))
 # use normal distribution to approximate p-value
 coefs$p.z <- 2 * (1 - pnorm(abs(coefs$t.value)))
 coefs
@@ -65,7 +81,7 @@ pd <- ests[ests$trt=="untrtpd",]
 tp <- ests[ests$trt=="trtpd",]
 
 ##calculate grasshopper effect on biomass for each month
-ghop_ef6 <-(pd$g_per_m2_est[tp$month==6])-(tp$g_per_m2_est[pd$month==6])
+ghop_ef6 <-(sum(pd$g_per_m2_est[tp$month==6]))-sum((tp$g_per_m2_est[pd$month==6]))
 ghop_ef7 <-(pd$g_per_m2_est[tp$month==7])-(tp$g_per_m2_est[pd$month==7])
 ghop_ef8 <-(pd$g_per_m2_est[tp$month==8])-(tp$g_per_m2_est[pd$month==8])
 ghop_ef9 <-(pd$g_per_m2_est[tp$month==9])-(tp$g_per_m2_est[pd$month==9])

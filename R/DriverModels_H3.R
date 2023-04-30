@@ -20,7 +20,7 @@ pm$month <- as.numeric(pm$month)
 head(pm)
 
 #effect of polynomial month on all pasture meter
-mo_pmod <- lmer(g_per_m2 ~ poly(month,2) + (1|line:site), data = pm)
+mo_pmod <- lmer(log10(g_per_m2) ~ poly(month,2) + (1|line:site), data = pm)
 summary(mo_pmod)
 # extract coefficients
 coefs <- data.frame(coef(summary(mo_pmod)))
@@ -36,31 +36,31 @@ pd <- pm[pm$trt=="untrtpd",]
 tp <- pm[pm$trt=="trtpd",]
 
 ##bison
-mo_pmod <- lmer(g_per_m2 ~ poly(month,2) + (1|line:site), data = b)
+mo_pmod <- lmer(log10(g_per_m2) ~ poly(month,2) + (1|line:site), data = b)
 coefs <- data.frame(coef(summary(mo_pmod)))
 coefs$p.z <- 2 * (1 - pnorm(abs(coefs$t.value)))
 coefs
 
 ##cattle
-mo_pmod <- lmer(g_per_m2 ~ poly(month,2) + (1|line:site), data = c)
+mo_pmod <- lmer(log10(g_per_m2) ~ poly(month,2) + (1|line:site), data = c)
 coefs <- data.frame(coef(summary(mo_pmod)))
 coefs$p.z <- 2 * (1 - pnorm(abs(coefs$t.value)))
 coefs
 
 ##ungrazed
-mo_pmod <- lmer(g_per_m2 ~ poly(month,2) + (1|line:site), data = un)
+mo_pmod <- lmer(log10(g_per_m2) ~ poly(month,2) + (1|line:site), data = un)
 coefs <- data.frame(coef(summary(mo_pmod)))
 coefs$p.z <- 2 * (1 - pnorm(abs(coefs$t.value)))
 coefs
 
 ##untrtpd
-mo_pmod <- lmer(g_per_m2 ~ poly(month,2) + (1|line:site), data = pd)
+mo_pmod <- lmer(log10(g_per_m2) ~ poly(month,2) + (1|line:site), data = pd)
 coefs <- data.frame(coef(summary(mo_pmod)))
 coefs$p.z <- 2 * (1 - pnorm(abs(coefs$t.value)))
 coefs
 
 ##trtpd
-mo_pmod <- lmer(g_per_m2 ~ poly(month,2) + (1|line:site), data = tp)
+mo_pmod <- lmer(log10(g_per_m2) ~ poly(month,2) + (1|line:site), data = tp)
 coefs <- data.frame(coef(summary(mo_pmod)))
 coefs$p.z <- 2 * (1 - pnorm(abs(coefs$t.value)))
 coefs
@@ -85,6 +85,18 @@ est$lf_P <- log10(est$f_P)
 est$lf_K <- log10(est$f_K)
 est$lf_Mg <- log10(est$f_Mg)
 est$lf_Na <- log10(est$f_Na)
+
+#grass overall
+cm <- lm(g_N ~ month, data=est)
+summary(cm)
+cm <- lm(lg_P ~ month, data=est)
+summary(cm)
+cm <- lm(lg_K ~ month, data=est)
+summary(cm)
+cm <- lm(lg_Na ~ month, data=est)
+summary(cm)
+cm <- lm(lg_Si ~ month, data=est)
+summary(cm)
 
 #subset by trt
 b <- est[est$trt=="bison",]
@@ -145,6 +157,17 @@ summary(cm)
 ##############not enough data here
 
 #################forb
+
+#forb overall
+cm <- lm(f_N ~ month, data=est)
+summary(cm)
+cm <- lm(lf_P ~ month, data=est)
+summary(cm)
+cm <- lm(lf_K ~ month, data=est)
+summary(cm)
+cm <- lm(lf_Na ~ month, data=est)
+summary(cm)
+
 #forb and bison
 cm <- lm(f_N ~ month, data=b)
 summary(cm)
