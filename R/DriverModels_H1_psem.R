@@ -1,5 +1,7 @@
 ##Set working directory (Ellen's computer)
 setwd("C:/Users/elwel/OneDrive/Desktop/AppraisingGrazing")
+##Set working directory (Julie's computer)
+setwd("/Users/julierebh/Downloads/AppraisingGrazing")
 
 #########Hypotheses:
 ##H1) Grazing will increase plant quality with smaller herbivores having larger effects 
@@ -111,6 +113,7 @@ summary(sem.f, standardize = "none", conserve = TRUE)
 
 ##################
 ## reduced forb chem model
+################Final forb model- use this one
 h1_N <- lm(f_N ~ scattle_dens + sPD_pres + sinsecticide  + soil_PC2_posCN + month, data = est)
 h1_P <- lm(lf_P ~ sinsecticide + f_N +(1|month), data = est)
 h1_K <- lm(lf_K ~ f_N + lf_P, data = est)

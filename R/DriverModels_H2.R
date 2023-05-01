@@ -1,5 +1,7 @@
 ##Set working directory (Ellen's computer)
 setwd("C:/Users/elwel/OneDrive/Desktop/AppraisingGrazing")
+##Set working directory (Julie's computer)
+setwd("/Users/julierebh/Downloads/AppraisingGrazing")
 
 #########Hypotheses:
 ##H1) Grazing will increase plant quality with smaller herbivores having larger effects 

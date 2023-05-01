@@ -1,5 +1,7 @@
 ##Set working directory (Ellen's computer)
 setwd("C:/Users/elwel/OneDrive/Desktop/AppraisingGrazing")
+##Set working directory (Julie's computer)
+setwd("/Users/julierebh/Downloads/AppraisingGrazing")
 
 #########Hypotheses:
 ##H1) Grazing will increase plant quality with smaller herbivores having larger effects 
@@ -27,6 +29,7 @@ coefs <- data.frame(coef(summary(mo_pmod)))
 # use normal distribution to approximate p-value
 coefs$p.z <- 2 * (1 - pnorm(abs(coefs$t.value)))
 coefs
+plot(log10(pm$g_per_m2) ~ pm$month)
 
 #subset by trt
 b <- pm[pm$trt=="bison",]
