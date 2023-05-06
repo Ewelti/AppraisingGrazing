@@ -22,14 +22,14 @@ pm$month <- as.numeric(pm$month)
 head(pm)
 
 #effect of polynomial month on all pasture meter
-mo_pmod <- lmer(log10(g_per_m2) ~ poly(month,2) + (1|line:site), data = pm)
+mo_pmod <- lmer(log10(g_per_m2) ~ poly(mo,2) + (1|line:site), data = pm)
 summary(mo_pmod)
 # extract coefficients
 coefs <- data.frame(coef(summary(mo_pmod)))
 # use normal distribution to approximate p-value
 coefs$p.z <- 2 * (1 - pnorm(abs(coefs$t.value)))
 coefs
-plot(log10(pm$g_per_m2) ~ pm$month)
+plot((pm$g_per_m2) ~ pm$DOY)
 
 #subset by trt
 b <- pm[pm$trt=="bison",]

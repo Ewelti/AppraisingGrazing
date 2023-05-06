@@ -88,7 +88,7 @@ h1_P <- lm(lg_P ~ sPD_pres + g_N, data = est)
 h1_K <- lm(lg_K ~ sbison_dens + sPD_pres + lg_P, data = est)
 h1_Mg <- lm(lg_Mg ~ sbison_dens + scattle_dens + g_N + month, data = est)
 h1_Na <- lm(lg_Na ~ sbison_dens + lg_Mg, data = est)
-h1_Si <- lm(lg_Si~ sinsecticide + lg_Na + lg_Mg + month, data = est)
+h1_Si <- lm(lg_Si~ sinsecticide + lg_Mg + month, data = est)
 s1 <- lm (soil_PC2_posCN ~ sbison_dens + sPD_pres + sinsecticide, data = est)
 #s2 <- lmer (soil_PC1_posOther ~ month, data = est)
 
