@@ -1,12 +1,12 @@
 ##Set working directory (Ellen's computer)
-setwd("C:/Users/elwel/OneDrive/Desktop/AppraisingGrazing/rawData")
+setwd("C:/Users/elwel/OneDrive/Desktop/AppraisingGrazing")
 
 ##load libraries
 library(lme4)
 library(stringr)
 #################pasture meter
 # attach data
-pm <- read.csv("PastureMeter.csv")
+pm <- read.csv("rawData/PastureMeter.csv")
 head(pm)
 
 hist(pm$g_per_m2)
@@ -39,12 +39,13 @@ coefs <- data.frame(coef(summary(mo)))
 coefs$p.z <- 2 * (1 - pnorm(abs(coefs$t.value)))
 coefs
 ######################
+tiff(filename = "plots/PastureMeter.tiff", width = 6, height = 6, units = 'in', res = 600, compression = 'lzw')
 
-par(mar=c(4,5,0.2,0.2))
-plot(1, type="n", xlim=c(5.5,9.5), ylim=c(120,280),las=1,ylab="",xlab="")
+par(mar=c(3,5,0.2,0.2))
+plot(1, type="n", xlim=c(5.5,9.5), ylim=c(120,280),las=1,ylab="",xlab="", xaxt='n')
+axis(1, at=c(6,7,8,9),cex.axis=1.1,labels=c("June","July","August","September"))
 box(lwd=2)
 title(ylab=expression("Dry grams/ m"^2), line=3, cex.lab=1.6)
-title(xlab="Month", line=2.5, cex.lab=1.6)
 ##bison
 points(ests$g_per_m2_est[ests$trt=="bison"] ~ ests$mo_jit[ests$trt=="bison"],pch=21,col="sienna",bg="sienna",cex=2)
 points(ests$g_per_m2_est[ests$trt=="bison"] ~ ests$mo_jit[ests$trt=="bison"],type="l",col="sienna",lwd=2)
@@ -67,4 +68,6 @@ points(ests$g_per_m2_est[ests$trt=="untrtpd"] ~ ests$mo_jit[ests$trt=="untrtpd"]
 arrows(ests$mo_jit[ests$trt=="untrtpd"], ests$g_per_m2_est[ests$trt=="untrtpd"]-ests$g_per_m2_SE[ests$trt=="untrtpd"], ests$mo_jit[ests$trt=="untrtpd"], ests$g_per_m2_est[ests$trt=="untrtpd"]+ests$g_per_m2_SE[ests$trt=="untrtpd"],col="goldenrod2",lwd=2,length=0.05, angle=90, code=3)
 
 legend("topright",legend=c("Ungrazed","Bison","Cattle","Untrt PD","Trt PD"), bty="n", pt.cex=2,cex=1.3, pch=c(23,21,22,25,24), pt.bg=c("dodgerblue","sienna","gray0","goldenrod2","firebrick2"),col=c("dodgerblue","sienna","gray0","goldenrod2","firebrick2"))
+
+dev.off()
 ##
