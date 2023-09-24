@@ -95,23 +95,34 @@ totGH_ef <- mean(c(ghop_ef6, ghop_ef7, ghop_ef8, ghop_ef9))
 ##average bison stocking density : 0.0148920706666667 bison/acre
 ##4046.86 sq m in 1 acre
 
-bi_ef6 <-(b$g_per_m2_est[tp$month==6])-(un$g_per_m2_est[pd$month==6])
-bi_ef7 <-(b$g_per_m2_est[tp$month==7])-(un$g_per_m2_est[pd$month==7])
-bi_ef8 <-(b$g_per_m2_est[tp$month==8])-(un$g_per_m2_est[pd$month==8])
-bi_ef9 <-(b$g_per_m2_est[tp$month==9])-(un$g_per_m2_est[pd$month==9])
+bi_ef6 <-(b$g_per_m2_est[b$month==6])-(un$g_per_m2_est[un$month==6])
+bi_ef7 <-(b$g_per_m2_est[b$month==7])-(un$g_per_m2_est[un$month==7])
+bi_ef8 <-(b$g_per_m2_est[b$month==8])-(un$g_per_m2_est[un$month==8])
+bi_ef9 <-(b$g_per_m2_est[b$month==9])-(un$g_per_m2_est[un$month==9])
 
 #calculate total bison effect on biomass
+##########average effect of bison presence per sq m
 totBi_ef <- mean(c(bi_ef6, bi_ef7, bi_ef8, bi_ef9))
+##########number of acres one bison has
+acres_per_bison <- 1/0.0148920706666667
+######### number of bison per sq m
+bi_per_sq_m <- 0.0148920706666667/4046.86
+############# number of meters 1 bison has
+m_per_bison <- 1/bi_per_sq_m
+########### one bison eats (kg)
+tot_bis_eat <- (m_per_bison*totBi_ef)/1000
+
+
 per_bi_ef_m <- totBi_ef*(0.0148920706666667/4046.86)
 per_bi_ef_ac_kg <- ((totBi_ef*4046.86)/0.0148920706666667)/1000
 
 ##calculate cattle effect on biomass for each month
 ##average cattle stocking density : 0.027007931 cattle/acre
 
-ca_ef6 <-(c$g_per_m2_est[tp$month==6])-(un$g_per_m2_est[pd$month==6])
-ca_ef7 <-(c$g_per_m2_est[tp$month==7])-(un$g_per_m2_est[pd$month==7])
-ca_ef8 <-(c$g_per_m2_est[tp$month==8])-(un$g_per_m2_est[pd$month==8])
-ca_ef9 <-(c$g_per_m2_est[tp$month==9])-(un$g_per_m2_est[pd$month==9])
+ca_ef6 <-(c$g_per_m2_est[c$month==6])-(un$g_per_m2_est[un$month==6])
+ca_ef7 <-(c$g_per_m2_est[c$month==7])-(un$g_per_m2_est[un$month==7])
+ca_ef8 <-(c$g_per_m2_est[c$month==8])-(un$g_per_m2_est[un$month==8])
+ca_ef9 <-(c$g_per_m2_est[c$month==9])-(un$g_per_m2_est[un$month==9])
 
 #calculate total cattle effect on biomass
 totCa_ef <- mean(c(ca_ef6, ca_ef7, ca_ef8, ca_ef9))
