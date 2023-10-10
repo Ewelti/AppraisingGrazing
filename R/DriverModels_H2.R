@@ -60,6 +60,21 @@ coefs <- data.frame(coef(summary(ipmod)))
 coefs$p.z <- 2 * (1 - pnorm(abs(coefs$t.value)))
 coefs
 
+#calculate estimates for trts
+ests <- NULL
+for(i in unique(pm$trt)){
+  sub <- pm[pm$trt == i, ]
+  ests.i <- coef(summary(lmer(g_per_m2 ~ 1 + (1|line:site), data = sub, )))[1,1:2]
+  ests.i <- data.frame(trt_mo = i, t(ests.i))
+  ests <- rbind(ests, ests.i) ; rm(ests.i, sub)
+} ; rm(i)
+ests
+colnames(ests)[2] ="g_per_m2_est"
+colnames(ests)[3] ="g_per_m2_SE"
+head(ests)
+1-(204.9460/237.7202)
+
+
 #calculate estimates for mo and trt combos
 pm$trt_mo <- paste(pm$trt,pm$month)
 ests <- NULL

@@ -88,9 +88,13 @@ est$lf_P <- log10(est$f_P)
 est$lf_K <- log10(est$f_K)
 est$lf_Mg <- log10(est$f_Mg)
 est$lf_Na <- log10(est$f_Na)
+est$lf_Si <- log10(est$f_Si)
+
 
 #grass overall
 cm <- lm(g_N ~ month, data=est)
+summary(cm)
+cm <- lm(g_C ~ month, data=est)
 summary(cm)
 cm <- lm(lg_P ~ month, data=est)
 summary(cm)
@@ -99,6 +103,8 @@ summary(cm)
 cm <- lm(lg_Na ~ month, data=est)
 summary(cm)
 cm <- lm(lg_Si ~ month, data=est)
+summary(cm)
+cm <- lm(lg_Mg ~ month, data=est)
 summary(cm)
 
 #subset by trt
@@ -119,6 +125,7 @@ cm <- lm(lg_Na ~ month, data=b)
 summary(cm)
 cm <- lm(lg_Si ~ month, data=b)
 summary(cm)
+
 
 #grass and cattle
 cm <- lm(g_N ~ month, data=c)
@@ -164,11 +171,17 @@ summary(cm)
 #forb overall
 cm <- lm(f_N ~ month, data=est)
 summary(cm)
+cm <- lm(f_C ~ month, data=est)
+summary(cm)
 cm <- lm(lf_P ~ month, data=est)
 summary(cm)
 cm <- lm(lf_K ~ month, data=est)
 summary(cm)
 cm <- lm(lf_Na ~ month, data=est)
+summary(cm)
+cm <- lm(lf_Si ~ month, data=est)
+summary(cm)
+cm <- lm(lf_Mg ~ month, data=est)
 summary(cm)
 
 #forb and bison
