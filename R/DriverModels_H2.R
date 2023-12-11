@@ -36,10 +36,10 @@ scaleVars <- function(df){
 
 #apply function
 pm <- scaleVars(pm)
-hist(log10(pm$g_per_m2))
+hist(log10(pm$g_per_m2+1))
 
 #pmod <- lmer(log10(g_per_m2) ~ trt + (1|line:site), data = pm)
-pmod <- lmer(log10(g_per_m2) ~ sbison_dens + scattle_dens + sPD_pres + sinsecticide + (1|line:site), data = pm)
+pmod <- lmer(log10(g_per_m2+1) ~ sbison_dens + scattle_dens + sPD_pres + sinsecticide + (1|line:site), data = pm)
 summary(pmod)
 # extract coefficients
 coefs <- data.frame(coef(summary(pmod)))
@@ -52,7 +52,7 @@ tpds <- pm[ which(pm$trt=='trtpd'), ]
 apds <- rbind(pds,tpds)
 apds$trt
 
-ipmod <- lmer(log10(g_per_m2) ~ sinsecticide + (1|line:site), data = apds)
+ipmod <- lmer(log10(g_per_m2+1) ~ sinsecticide + (1|line:site), data = apds)
 summary(ipmod)
 # extract coefficients
 coefs <- data.frame(coef(summary(ipmod)))
@@ -72,7 +72,6 @@ ests
 colnames(ests)[2] ="g_per_m2_est"
 colnames(ests)[3] ="g_per_m2_SE"
 head(ests)
-1-(204.9460/237.7202)
 
 
 #calculate estimates for mo and trt combos

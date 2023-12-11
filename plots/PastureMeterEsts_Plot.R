@@ -42,7 +42,7 @@ coefs
 tiff(filename = "plots/PastureMeter.tiff", width = 6, height = 6, units = 'in', res = 600, compression = 'lzw')
 
 par(mar=c(3,5,0.2,0.2))
-plot(1, type="n", xlim=c(5.5,9.5), ylim=c(120,280),las=1,ylab="",xlab="", xaxt='n')
+plot(1, type="n", xlim=c(5.5,9.5), ylim=c(40,235),las=1,ylab="",xlab="", xaxt='n')
 axis(1, at=c(6,7,8,9),cex.axis=1.1,labels=c("June","July","August","September"))
 box(lwd=2)
 title(ylab=expression("Dry grams/ m"^2), line=3, cex.lab=1.6)

@@ -33,7 +33,7 @@ st <- read.csv("rawData/stocking.csv")
 pm <- merge(st,pm,by=c("site"),all.x=T, all.y=T)
 head(pm)
 
-#calculate trt estimates soil C
+#calculate trt estimates pm
 tests <- NULL
 for(i in unique(pm$trt)){
   sub <- pm[pm$trt == i, ]
