@@ -5,10 +5,4 @@
 papers/*
 plots/unused/*
 R/old/*
-rawdata/PooCount
-rawdata/ClipBiomass
-rawdata/RingCounts
-rawdata/SoilMoisture
-rawdata/spids
-rawdata/spids_summary
-rawdata/TempRH
+rawdata/unused/*
