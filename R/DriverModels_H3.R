@@ -30,6 +30,7 @@ coefs <- data.frame(coef(summary(mo_pmod)))
 coefs$p.z <- 2 * (1 - pnorm(abs(coefs$t.value)))
 coefs
 plot((pm$g_per_m2) ~ pm$DOY)
+confint(mo_pmod)
 
 #subset by trt
 b <- pm[pm$trt=="bison",]
@@ -43,30 +44,35 @@ mo_pmod <- lmer(log10(g_per_m2+1) ~ poly(month,2) + (1|line:site), data = b)
 coefs <- data.frame(coef(summary(mo_pmod)))
 coefs$p.z <- 2 * (1 - pnorm(abs(coefs$t.value)))
 coefs
+confint(mo_pmod)
 
 ##cattle
 mo_pmod <- lmer(log10(g_per_m2+1) ~ poly(month,2) + (1|line:site), data = c)
 coefs <- data.frame(coef(summary(mo_pmod)))
 coefs$p.z <- 2 * (1 - pnorm(abs(coefs$t.value)))
 coefs
+confint(mo_pmod)
 
 ##ungrazed
 mo_pmod <- lmer(log10(g_per_m2+1) ~ poly(month,2) + (1|line:site), data = un)
 coefs <- data.frame(coef(summary(mo_pmod)))
 coefs$p.z <- 2 * (1 - pnorm(abs(coefs$t.value)))
 coefs
+confint(mo_pmod)
 
 ##untrtpd
 mo_pmod <- lmer(log10(g_per_m2+1) ~ poly(month,2) + (1|line:site), data = pd)
 coefs <- data.frame(coef(summary(mo_pmod)))
 coefs$p.z <- 2 * (1 - pnorm(abs(coefs$t.value)))
 coefs
+confint(mo_pmod)
 
 ##trtpd
 mo_pmod <- lmer(log10(g_per_m2+1) ~ poly(month,2) + (1|line:site), data = tp)
 coefs <- data.frame(coef(summary(mo_pmod)))
 coefs$p.z <- 2 * (1 - pnorm(abs(coefs$t.value)))
 coefs
+confint(mo_pmod)
 #################################
 
 ##################H3 nutrients

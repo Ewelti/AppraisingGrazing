@@ -41,6 +41,7 @@ hist(log10(pm$g_per_m2+1))
 #pmod <- lmer(log10(g_per_m2) ~ trt + (1|line:site), data = pm)
 pmod <- lmer(log10(g_per_m2+1) ~ sbison_dens + scattle_dens + sPD_pres + sinsecticide + (1|line:site), data = pm)
 summary(pmod)
+confint(pmod)
 # extract coefficients
 coefs <- data.frame(coef(summary(pmod)))
 # use normal distribution to approximate p-value
