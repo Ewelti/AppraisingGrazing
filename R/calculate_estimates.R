@@ -187,6 +187,7 @@ colnames(sub_w)[1:8] = c("w_C", "w_N", "w_Ca", "w_K", "w_Mg", "w_Na", "w_P", "w_
 ests_sco <- merge(sub_g,ests_scor,by=c("site","month"),all.x=T, all.y=T)
 ests_sco <- merge(sub_f,ests_sco,by=c("site","month"),all.x=T, all.y=T)
 ests_sco <- merge(sub_w,ests_sco,by=c("site","month"),all.x=T, all.y=T)
+head(ests_sco)
 dim(ests_sco)
 
 ######################################## soil chem
@@ -194,9 +195,14 @@ schem <- read.csv("rawData/SoilChem.csv")
 head(schem)
 schem = subset(schem, select = -c(Number,yr,month,day,Al_ppm,Co_ppm,Fe_ppm,Mn_ppm,S_ppm,Zn_ppm))
 schem$site_mo <- paste(schem$site,schem$mo)
-schem = subset(schem, select = -c(site,mo))
+schem$month <- paste(schem$mo)
+head(schem)
+ests_sco <- merge(schem,ests_sco,by=c("site","month"),all.x=T, all.y=T)
+schem = subset(schem, select = -c(site,mo,trt,month))
+head(schem)
 row.names(schem) <- schem[,8]
 sc <- schem[,1:7]
+head(sc)
 
 ##soil PCA
 prin_comp<-prcomp(sc, scale=T)
@@ -235,6 +241,9 @@ ss = subset(ss, select = -c(site_mo))
 
 ests_scos <- merge(ss,ests_sco,by=c("site","month"),all.x=T, all.y=T)
 head(ests_scos)
+
+ests_scos$trt <- paste(ests_scos$trt.x)
+ests_scos = subset(ests_scos, select = -c(mo,trt.x))
 
 ########################################Temperature
 temp <- read.csv("outputs/Temp_summary.csv")
