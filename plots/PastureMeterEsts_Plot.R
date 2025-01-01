@@ -39,7 +39,7 @@ coefs <- data.frame(coef(summary(mo)))
 coefs$p.z <- 2 * (1 - pnorm(abs(coefs$t.value)))
 coefs
 ######################
-tiff(filename = "plots/PastureMeter.tiff", width = 6, height = 6, units = 'in', res = 600, compression = 'lzw')
+tiff(filename = "plots/PastureMeter.tif", width = 6, height = 6, units = 'in', res = 600, compression = 'lzw')
 
 par(mar=c(3,5,0.2,0.2))
 plot(1, type="n", xlim=c(5.5,9.5), ylim=c(40,235),las=1,ylab="",xlab="", xaxt='n')
