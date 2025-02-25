@@ -38,8 +38,7 @@ scaleVars <- function(df){
 pm <- scaleVars(pm)
 hist(log10(pm$g_per_m2+1))
 
-#pmod <- lmer(log10(g_per_m2) ~ trt + (1|line:site), data = pm)
-pmod <- lmer(log10(g_per_m2+1) ~ sbison_dens + scattle_dens + sPD_pres + sinsecticide + (1|line:site), data = pm)
+pmod <- lmer(log10(g_per_m2+1) ~ trt + (1|line:site), data = pm)
 summary(pmod)
 confint(pmod)
 # extract coefficients

@@ -77,10 +77,11 @@ colnames(untrtpd_c_df) <- c("Property","bi_percC", "untrtpd_percC")
 untrtpd_c <- rbind(untrtpd_c_wr,untrtpd_c_df) ## make comparison df for all untrtPD
 
 plot(trtpd_c$bi_percC, trtpd_c$trtpd_percC, pch = 16, xlim=c(1.5,5),
-     ylim=c(1,15), xlab="Bison soil %C", ylab="PD soil %C")
+     ylim=c(1,15), xlab="Bison soil %C", ylab="Prairie Dog Town soil %C")
 abline(0, 1, col="grey60", lwd=2, )
 points(trtpd_c$bi_percC, trtpd_c$trtpd_percC, pch = 16, cex =1.5)
 points(untrtpd_c$bi_percC, untrtpd_c$untrtpd_percC, pch = 17, cex =1.5, col=2)
+legend("topleft", col=c(2,1), pch=c(17,16), legend=c("Untreated", "Insecticide Treated"), bty="n", cex=1.3)
 
 
 ##########SOIL N

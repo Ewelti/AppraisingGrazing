@@ -51,6 +51,20 @@ head(ests_rc)
 ests_rc = subset(ests_rc, select = -c(site_mo))
 ests_s <- merge(ests_su,ests_rc,by=c("site","month"))
 
+#################PD poo count
+pc <- read.csv("rawData/PD_PooCount.csv")
+head(pc)
+#calculate estimates for each site and month
+pc$site_mo <- paste(pc$site,pc$mo)
+pc_m <- aggregate(pc[,7], list(pc$site_mo), mean)
+
+pc_m[c('site', 'month')] <- str_split_fixed(pc_m$Group.1, ' ', 2)
+colnames(pc_m)[2] ="PD_poo"
+pc_m$month <-as.numeric(pc_m$month)
+head(pc_m)
+pc_m = subset(pc_m, select = -c(Group.1))
+ests_sp <- merge(ests_s,pc_m,by=c("site","month"))
+
 #########clipbiomass
 cb <- read.csv("rawData/ClipBiomass.csv")
 head(cb)
@@ -78,7 +92,7 @@ head(ttt)
 colnames(df)
 df = subset(ttt, select = -c(site_mo_type.x,type.x,site_mo_type.y,type.y,site_mo_type,type))
 head(df)
-ests_sc <- merge(ests_s,df,by=c("site","month"))
+ests_sc <- merge(ests_sp,df,by=c("site","month"))
 head(ests_sc)
 
 ######################################## Plant chem
