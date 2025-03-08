@@ -25,33 +25,7 @@ subf <- chemsum[chemsum$type=="forb",]
 ################
 tiff(filename = "plots/GrassChem_individualPlots.tiff", width = 9, height = 5, units = 'in', res = 600, compression = 'lzw')
 
-par(mar=c(2.5,5,0.2,0.2),mfrow=c(2,4))
-#########grass C
-plot(1, type="n", xlim=c(5.5,9.5), ylim=c(37.5,48),las=1,ylab="",xlab="", xaxt='n')
-axis(1, at=c(6,7,8,9),cex.axis=1,labels=c("Jun","Jul","Aug","Sept"))
-box(lwd=2)
-title(ylab="Grass %C", line=3, cex.lab=1.6)
-#title(xlab="Month", line=2.5, cex.lab=1.6)
-##bison
-points(subg$percC[,1][subg$trt=="bison"] ~ subg$month[subg$trt=="bison"],pch=21,col="sienna",bg="sienna",cex=2)
-points(subg$percC[,1][subg$trt=="bison"] ~ subg$month[subg$trt=="bison"],type="l",col="sienna",lwd=2)
-arrows(subg$month[subg$trt=="bison"], subg$percC[,1][subg$trt=="bison"]-subg$percC[,2][subg$trt=="bison"], subg$month[subg$trt=="bison"], subg$percC[,1][subg$trt=="bison"]+subg$percC[,2][subg$trt=="bison"],col="sienna",lwd=2,length=0.05, angle=90, code=3)
-##cattle
-points(subg$percC[,1][subg$trt=="cattle"] ~ subg$month[subg$trt=="cattle"],pch=22,col="gray0",bg="gray0",cex=2)
-points(subg$percC[,1][subg$trt=="cattle"] ~ subg$month[subg$trt=="cattle"],type="l",col="gray0",lwd=2)
-arrows(subg$month[subg$trt=="cattle"], subg$percC[,1][subg$trt=="cattle"]-subg$percC[,2][subg$trt=="cattle"], subg$month[subg$trt=="cattle"], subg$percC[,1][subg$trt=="cattle"]+subg$percC[,2][subg$trt=="cattle"],col="gray0",lwd=2,length=0.05, angle=90, code=3)
-##ungrazed
-points(subg$percC[,1][subg$trt=="ungrazed"] ~ subg$month[subg$trt=="ungrazed"],pch=23,col="dodgerblue",bg="dodgerblue",cex=2)
-points(subg$percC[,1][subg$trt=="ungrazed"] ~ subg$month[subg$trt=="ungrazed"],type="l",col="dodgerblue",lwd=2)
-arrows(subg$month[subg$trt=="ungrazed"], subg$percC[,1][subg$trt=="ungrazed"]-subg$percC[,2][subg$trt=="ungrazed"], subg$month[subg$trt=="ungrazed"], subg$percC[,1][subg$trt=="ungrazed"]+subg$percC[,2][subg$trt=="ungrazed"],col="dodgerblue",lwd=2,length=0.05, angle=90, code=3)
-##trtpd
-points(subg$percC[,1][subg$trt=="trtpd"] ~ subg$month[subg$trt=="trtpd"],pch=24,col="firebrick2",bg="firebrick2",cex=2)
-points(subg$percC[,1][subg$trt=="trtpd"] ~ subg$month[subg$trt=="trtpd"],type="l",col="firebrick2",lwd=2)
-arrows(subg$month[subg$trt=="trtpd"], subg$percC[,1][subg$trt=="trtpd"]-subg$percC[,2][subg$trt=="trtpd"], subg$month[subg$trt=="trtpd"], subg$percC[,1][subg$trt=="trtpd"]+subg$percC[,2][subg$trt=="trtpd"],col="firebrick2",lwd=2,length=0.05, angle=90, code=3)
-##untrtpd
-points(subg$percC[,1][subg$trt=="untrtpd"] ~ subg$month[subg$trt=="untrtpd"],pch=25,col="goldenrod2",bg="goldenrod2",cex=2)
-points(subg$percC[,1][subg$trt=="untrtpd"] ~ subg$month[subg$trt=="untrtpd"],type="l",col="goldenrod2",lwd=2)
-arrows(subg$month[subg$trt=="untrtpd"], subg$percC[,1][subg$trt=="untrtpd"]-subg$percC[,2][subg$trt=="untrtpd"], subg$month[subg$trt=="untrtpd"], subg$percC[,1][subg$trt=="untrtpd"]+subg$percC[,2][subg$trt=="untrtpd"],col="goldenrod2",lwd=2,length=0.05, angle=90, code=3)
+par(mar=c(2.5,5,0.2,0.2),mfrow=c(2,3))
 
 ##grass N
 plot(1, type="n", xlim=c(5.5,9.5), ylim=c(0.5,3),las=1,ylab="",xlab="", xaxt='n')
@@ -78,6 +52,7 @@ arrows(subg$month[subg$trt=="trtpd"], subg$percN[,1][subg$trt=="trtpd"]-subg$per
 points(subg$percN[,1][subg$trt=="untrtpd"] ~ subg$month[subg$trt=="untrtpd"],pch=25,col="goldenrod2",bg="goldenrod2",cex=2)
 points(subg$percN[,1][subg$trt=="untrtpd"] ~ subg$month[subg$trt=="untrtpd"],type="l",col="goldenrod2",lwd=2)
 arrows(subg$month[subg$trt=="untrtpd"], subg$percN[,1][subg$trt=="untrtpd"]-subg$percN[,2][subg$trt=="untrtpd"], subg$month[subg$trt=="untrtpd"], subg$percN[,1][subg$trt=="untrtpd"]+subg$percN[,2][subg$trt=="untrtpd"],col="goldenrod2",lwd=2,length=0.05, angle=90, code=3)
+legend("topright", legend=("A"), bty="n", cex=1.5)
 
 ##grass P
 plot(1, type="n", xlim=c(5.5,9.5), ylim=c(600,2700),las=1,ylab="",xlab="", xaxt='n')
@@ -104,6 +79,7 @@ arrows(subg$month[subg$trt=="trtpd"], subg$P_ppm[,1][subg$trt=="trtpd"]-subg$P_p
 points(subg$P_ppm[,1][subg$trt=="untrtpd"] ~ subg$month[subg$trt=="untrtpd"],pch=25,col="goldenrod2",bg="goldenrod2",cex=2)
 points(subg$P_ppm[,1][subg$trt=="untrtpd"] ~ subg$month[subg$trt=="untrtpd"],type="l",col="goldenrod2",lwd=2)
 arrows(subg$month[subg$trt=="untrtpd"], subg$P_ppm[,1][subg$trt=="untrtpd"]-subg$P_ppm[,2][subg$trt=="untrtpd"], subg$month[subg$trt=="untrtpd"], subg$P_ppm[,1][subg$trt=="untrtpd"]+subg$P_ppm[,2][subg$trt=="untrtpd"],col="goldenrod2",lwd=2,length=0.05, angle=90, code=3)
+legend("topright", legend=("B"), bty="n", cex=1.5)
 
 ##grass K
 plot(1, type="n", xlim=c(5.5,9.5), ylim=c(4500,27000),las=1,ylab="",xlab="", xaxt='n')
@@ -130,6 +106,7 @@ arrows(subg$month[subg$trt=="trtpd"], subg$K_ppm[,1][subg$trt=="trtpd"]-subg$K_p
 points(subg$K_ppm[,1][subg$trt=="untrtpd"] ~ subg$month[subg$trt=="untrtpd"],pch=25,col="goldenrod2",bg="goldenrod2",cex=2)
 points(subg$K_ppm[,1][subg$trt=="untrtpd"] ~ subg$month[subg$trt=="untrtpd"],type="l",col="goldenrod2",lwd=2)
 arrows(subg$month[subg$trt=="untrtpd"], subg$K_ppm[,1][subg$trt=="untrtpd"]-subg$K_ppm[,2][subg$trt=="untrtpd"], subg$month[subg$trt=="untrtpd"], subg$K_ppm[,1][subg$trt=="untrtpd"]+subg$K_ppm[,2][subg$trt=="untrtpd"],col="goldenrod2",lwd=2,length=0.05, angle=90, code=3)
+legend("topright", legend=("C"), bty="n", cex=1.5)
 
 ##################
 
@@ -158,6 +135,7 @@ arrows(subg$month[subg$trt=="trtpd"], subg$Mg_ppm[,1][subg$trt=="trtpd"]-subg$Mg
 points(subg$Mg_ppm[,1][subg$trt=="untrtpd"] ~ subg$month[subg$trt=="untrtpd"],pch=25,col="goldenrod2",bg="goldenrod2",cex=2)
 points(subg$Mg_ppm[,1][subg$trt=="untrtpd"] ~ subg$month[subg$trt=="untrtpd"],type="l",col="goldenrod2",lwd=2)
 arrows(subg$month[subg$trt=="untrtpd"], subg$Mg_ppm[,1][subg$trt=="untrtpd"]-subg$Mg_ppm[,2][subg$trt=="untrtpd"], subg$month[subg$trt=="untrtpd"], subg$Mg_ppm[,1][subg$trt=="untrtpd"]+subg$Mg_ppm[,2][subg$trt=="untrtpd"],col="goldenrod2",lwd=2,length=0.05, angle=90, code=3)
+legend("topright", legend=("D"), bty="n", cex=1.5)
 
 ##grass Na
 plot(1, type="n", xlim=c(5.5,9.5), ylim=c(1220,2050),las=1,ylab="",xlab="", xaxt='n')
@@ -184,7 +162,9 @@ arrows(subg$month[subg$trt=="trtpd"], subg$Na_ppm[,1][subg$trt=="trtpd"]-subg$Na
 points(subg$Na_ppm[,1][subg$trt=="untrtpd"] ~ subg$month[subg$trt=="untrtpd"],pch=25,col="goldenrod2",bg="goldenrod2",cex=2)
 points(subg$Na_ppm[,1][subg$trt=="untrtpd"] ~ subg$month[subg$trt=="untrtpd"],type="l",col="goldenrod2",lwd=2)
 arrows(subg$month[subg$trt=="untrtpd"], subg$Na_ppm[,1][subg$trt=="untrtpd"]-subg$Na_ppm[,2][subg$trt=="untrtpd"], subg$month[subg$trt=="untrtpd"], subg$Na_ppm[,1][subg$trt=="untrtpd"]+subg$Na_ppm[,2][subg$trt=="untrtpd"],col="goldenrod2",lwd=2,length=0.05, angle=90, code=3)
-
+legend("topright", legend=("E"), bty="n", cex=1.5)
+legend("topleft",legend=c("Ungrazed","Bison","Cattle","Untrt PD","Trt PD"), bty="n", pt.cex=2,cex=1.5, pch=c(23,21,22,25,24), pt.bg=c("dodgerblue","sienna","gray0","goldenrod2","firebrick2"),col=c("dodgerblue","sienna","gray0","goldenrod2","firebrick2"))
+##
 
 ##grass Si
 plot(1, type="n", xlim=c(5.5,9.5), ylim=c(0,1300),las=1,ylab="",xlab="", xaxt='n')
@@ -211,10 +191,7 @@ arrows(subg$month[subg$trt=="trtpd"], subg$Si_ppm[,1][subg$trt=="trtpd"]-subg$Si
 points(subg$Si_ppm[,1][subg$trt=="untrtpd"] ~ subg$month[subg$trt=="untrtpd"],pch=25,col="goldenrod2",bg="goldenrod2",cex=2)
 points(subg$Si_ppm[,1][subg$trt=="untrtpd"] ~ subg$month[subg$trt=="untrtpd"],type="l",col="goldenrod2",lwd=2)
 arrows(subg$month[subg$trt=="untrtpd"], subg$Si_ppm[,1][subg$trt=="untrtpd"]-subg$Si_ppm[,2][subg$trt=="untrtpd"], subg$month[subg$trt=="untrtpd"], subg$Si_ppm[,1][subg$trt=="untrtpd"]+subg$Si_ppm[,2][subg$trt=="untrtpd"],col="goldenrod2",lwd=2,length=0.05, angle=90, code=3)
-##
-
-plot.new()
-legend("top",legend=c("Ungrazed","Bison","Cattle","Untrt PD","Trt PD"), bty="n", pt.cex=3,cex=2, pch=c(23,21,22,25,24), pt.bg=c("dodgerblue","sienna","gray0","goldenrod2","firebrick2"),col=c("dodgerblue","sienna","gray0","goldenrod2","firebrick2"))
+legend("topright", legend=("F"), bty="n", cex=1.5)
 ##
 
 dev.off()
@@ -247,5 +224,32 @@ arrows(subg$month[subg$trt=="trtpd"], subg$Ca_ppm[,1][subg$trt=="trtpd"]-subg$Ca
 points(subg$Ca_ppm[,1][subg$trt=="untrtpd"] ~ subg$month[subg$trt=="untrtpd"],pch=25,col="goldenrod2",bg="goldenrod2",cex=2)
 points(subg$Ca_ppm[,1][subg$trt=="untrtpd"] ~ subg$month[subg$trt=="untrtpd"],type="l",col="goldenrod2",lwd=2)
 arrows(subg$month[subg$trt=="untrtpd"], subg$Ca_ppm[,1][subg$trt=="untrtpd"]-subg$Ca_ppm[,2][subg$trt=="untrtpd"], subg$month[subg$trt=="untrtpd"], subg$Ca_ppm[,1][subg$trt=="untrtpd"]+subg$Ca_ppm[,2][subg$trt=="untrtpd"],col="goldenrod2",lwd=2,length=0.05, angle=90, code=3)
+
+#########grass C
+plot(1, type="n", xlim=c(5.5,9.5), ylim=c(37.5,48),las=1,ylab="",xlab="", xaxt='n')
+axis(1, at=c(6,7,8,9),cex.axis=1,labels=c("Jun","Jul","Aug","Sept"))
+box(lwd=2)
+title(ylab="Grass %C", line=3, cex.lab=1.6)
+#title(xlab="Month", line=2.5, cex.lab=1.6)
+##bison
+points(subg$percC[,1][subg$trt=="bison"] ~ subg$month[subg$trt=="bison"],pch=21,col="sienna",bg="sienna",cex=2)
+points(subg$percC[,1][subg$trt=="bison"] ~ subg$month[subg$trt=="bison"],type="l",col="sienna",lwd=2)
+arrows(subg$month[subg$trt=="bison"], subg$percC[,1][subg$trt=="bison"]-subg$percC[,2][subg$trt=="bison"], subg$month[subg$trt=="bison"], subg$percC[,1][subg$trt=="bison"]+subg$percC[,2][subg$trt=="bison"],col="sienna",lwd=2,length=0.05, angle=90, code=3)
+##cattle
+points(subg$percC[,1][subg$trt=="cattle"] ~ subg$month[subg$trt=="cattle"],pch=22,col="gray0",bg="gray0",cex=2)
+points(subg$percC[,1][subg$trt=="cattle"] ~ subg$month[subg$trt=="cattle"],type="l",col="gray0",lwd=2)
+arrows(subg$month[subg$trt=="cattle"], subg$percC[,1][subg$trt=="cattle"]-subg$percC[,2][subg$trt=="cattle"], subg$month[subg$trt=="cattle"], subg$percC[,1][subg$trt=="cattle"]+subg$percC[,2][subg$trt=="cattle"],col="gray0",lwd=2,length=0.05, angle=90, code=3)
+##ungrazed
+points(subg$percC[,1][subg$trt=="ungrazed"] ~ subg$month[subg$trt=="ungrazed"],pch=23,col="dodgerblue",bg="dodgerblue",cex=2)
+points(subg$percC[,1][subg$trt=="ungrazed"] ~ subg$month[subg$trt=="ungrazed"],type="l",col="dodgerblue",lwd=2)
+arrows(subg$month[subg$trt=="ungrazed"], subg$percC[,1][subg$trt=="ungrazed"]-subg$percC[,2][subg$trt=="ungrazed"], subg$month[subg$trt=="ungrazed"], subg$percC[,1][subg$trt=="ungrazed"]+subg$percC[,2][subg$trt=="ungrazed"],col="dodgerblue",lwd=2,length=0.05, angle=90, code=3)
+##trtpd
+points(subg$percC[,1][subg$trt=="trtpd"] ~ subg$month[subg$trt=="trtpd"],pch=24,col="firebrick2",bg="firebrick2",cex=2)
+points(subg$percC[,1][subg$trt=="trtpd"] ~ subg$month[subg$trt=="trtpd"],type="l",col="firebrick2",lwd=2)
+arrows(subg$month[subg$trt=="trtpd"], subg$percC[,1][subg$trt=="trtpd"]-subg$percC[,2][subg$trt=="trtpd"], subg$month[subg$trt=="trtpd"], subg$percC[,1][subg$trt=="trtpd"]+subg$percC[,2][subg$trt=="trtpd"],col="firebrick2",lwd=2,length=0.05, angle=90, code=3)
+##untrtpd
+points(subg$percC[,1][subg$trt=="untrtpd"] ~ subg$month[subg$trt=="untrtpd"],pch=25,col="goldenrod2",bg="goldenrod2",cex=2)
+points(subg$percC[,1][subg$trt=="untrtpd"] ~ subg$month[subg$trt=="untrtpd"],type="l",col="goldenrod2",lwd=2)
+arrows(subg$month[subg$trt=="untrtpd"], subg$percC[,1][subg$trt=="untrtpd"]-subg$percC[,2][subg$trt=="untrtpd"], subg$month[subg$trt=="untrtpd"], subg$percC[,1][subg$trt=="untrtpd"]+subg$percC[,2][subg$trt=="untrtpd"],col="goldenrod2",lwd=2,length=0.05, angle=90, code=3)
 
 
