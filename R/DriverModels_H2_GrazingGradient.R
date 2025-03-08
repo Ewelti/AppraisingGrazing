@@ -14,15 +14,8 @@ library(lme4)
 library(stringr)
 ############################H2
 ##all data
-pm <- read.csv("rawData/PastureMeter.csv")
-dim(pm)
 st <- read.csv("outputs/SiteMonthLevel.csv")
 head(st)
-pm <- merge(st,pm,by=c("site","month"),all.x=T, all.y=T)
-head(pm)
-pm$trt <- as.factor(pm$trt)
-pm$site <- as.factor(pm$site)
-pm$line <- as.factor(pm$line)
 
 #function to add a new column onto the data with scaled vars (with s before their name)
 scaleVars <- function(df){
@@ -32,10 +25,11 @@ scaleVars <- function(df){
 }
 
 #apply function
-pm <- scaleVars(pm)
-hist(log10(pm$g_per_m2+1))
+st <- scaleVars(st)
+hist((st$g_per_m2_est))
 
-pmod <- lmer(log10(g_per_m2+1) ~ sbison_dens + scattle_dens + sPD_poo + sghop_m2_est + (1|line:site), data = pm)
+#####full model
+pmod <- lmer(g_per_m2_est ~ sbison_dens + scattle_dens + sPD_poo + sghop_m2_est + (1|site), data = st)
 summary(pmod)
 confint(pmod)
 # extract coefficients
@@ -43,4 +37,48 @@ coefs <- data.frame(coef(summary(pmod)))
 # use normal distribution to approximate p-value
 coefs$p.z <- 2 * (1 - pnorm(abs(coefs$t.value)))
 coefs
+
+####pd model
+pds <- st[ which(pm$trt=='untrtpd'), ]
+tpds <- st[ which(pm$trt=='trtpd'), ]
+apds <- rbind(pds,tpds)
+apds$trt
+
+pmod <- lmer(g_per_m2_est ~ PD_poo + (1|site), data = apds)
+summary(pmod)
+confint(pmod)
+# extract coefficients
+coefs <- data.frame(coef(summary(pmod)))
+# use normal distribution to approximate p-value
+coefs$p.z <- 2 * (1 - pnorm(abs(coefs$t.value)))
+coefs
+
+####cattle model
+catt <- st[ which(st$trt=='cattle'), ]
+catt$trt
+
+pmod <- lmer(g_per_m2_est ~ cattle_dens + (1|site), data = catt)
+summary(pmod)
+confint(pmod)
+# extract coefficients
+coefs <- data.frame(coef(summary(pmod)))
+# use normal distribution to approximate p-value
+coefs$p.z <- 2 * (1 - pnorm(abs(coefs$t.value)))
+coefs
+
+####bison model
+bi <- st[ which(st$trt=='bison'), ]
+bi$trt
+
+pmod <- lmer(g_per_m2_est ~ bison_dens + (1|site), data = bi)
+summary(pmod)
+confint(pmod)
+# extract coefficients
+coefs <- data.frame(coef(summary(pmod)))
+# use normal distribution to approximate p-value
+coefs$p.z <- 2 * (1 - pnorm(abs(coefs$t.value)))
+coefs
+
+plot(g_per_m2_est~ghop_m2_est, log="xy", data = st)
+plot(g_per_m2_est~PD_poo, data = st)
 ####################################

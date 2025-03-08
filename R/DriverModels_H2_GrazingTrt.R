@@ -14,18 +14,11 @@ library(lme4)
 library(stringr)
 ############################H2
 ##all data
-pm <- read.csv("rawData/PastureMeter.csv")
-st <- read.csv("rawData/stocking.csv")
-pm <- merge(st,pm,by=c("site"),all.x=T, all.y=T)
-head(pm)
-pm$trt <- as.factor(pm$trt)
-pm$month <- as.factor(pm$month)
-pm$site <- as.factor(pm$site)
-pm$line <- as.factor(pm$line)
+st <- read.csv("outputs/SiteMonthLevel.csv")
+head(st)
 
-unique(pm$trt)
 #make ungrazed the reference level
-pm <- within(pm, trt <- relevel(trt, ref = 4))
+st <- within(st, trt <- relevel(trt, ref = 4))
 
 #function to add a new column onto the data with scaled vars (with s before their name)
 scaleVars <- function(df){
@@ -35,10 +28,9 @@ scaleVars <- function(df){
 }
 
 #apply function
-pm <- scaleVars(pm)
-hist(log10(pm$g_per_m2+1))
+pm <- scaleVars(st)
 
-pmod <- lmer(log10(g_per_m2+1) ~ trt + (1|line:site), data = pm)
+pmod <- lmer(log10(g_per_m2_est) ~ trt + (1|site), data = pm)
 summary(pmod)
 confint(pmod)
 # extract coefficients
