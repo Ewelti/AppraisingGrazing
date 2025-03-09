@@ -18,19 +18,10 @@ st <- read.csv("outputs/SiteMonthLevel.csv")
 head(st)
 
 #make ungrazed the reference level
+st$trt <- as.factor(st$trt)
 st <- within(st, trt <- relevel(trt, ref = 4))
 
-#function to add a new column onto the data with scaled vars (with s before their name)
-scaleVars <- function(df){
-  newd <- plyr::numcolwise(scale)(df)
-  names(newd) <- sapply(names(newd),function(x)paste0("s",x))
-  cbind(df, newd)
-}
-
-#apply function
-pm <- scaleVars(st)
-
-pmod <- lmer(log10(g_per_m2_est) ~ trt + (1|site), data = pm)
+pmod <- lmer(log10(g_per_m2_est) ~ trt + poly(month,2) + (1|site), data = st)
 summary(pmod)
 confint(pmod)
 # extract coefficients

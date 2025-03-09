@@ -29,7 +29,7 @@ st <- scaleVars(st)
 hist((st$g_per_m2_est))
 
 #####full model
-pmod <- lmer(g_per_m2_est ~ sbison_dens + scattle_dens + sPD_poo + sghop_m2_est + (1|site), data = st)
+pmod <- lmer(g_per_m2_est ~ sbison_dens + scattle_dens + sPD_poo + sghop_m2_est + poly(smonth,2) + (1|site), data = st)
 summary(pmod)
 confint(pmod)
 # extract coefficients

@@ -17,7 +17,6 @@ est <- read.csv("outputs/SiteMonthLevel.csv")
 head(est)
 est$trt <- as.factor(est$trt)
 
-
 #function to add a new column onto the data with scaled vars (with s before their name)
 scaleVars <- function(df){
   newd <- plyr::numcolwise(scale)(df)
@@ -54,7 +53,7 @@ est$ls_Mg <- log10(est$Mg_ppm)
 est$ls_Na <- log10(est$Na_ppm)
 
 #######################grass N
-pmod <- lmer(lg_N ~ sbison_dens + scattle_dens + sPD_poo + sghop_m2_est + (1|site), data = est)
+pmod <- lmer(lg_N ~ sbison_dens + scattle_dens + sPD_poo + sghop_m2_est + smonth + (1|site), data = est)
 summary(pmod)
 confint(pmod)
 # extract coefficients
@@ -62,11 +61,11 @@ coefs <- data.frame(coef(summary(pmod)))
 # use normal distribution to approximate p-value
 coefs$p.z <- 2 * (1 - pnorm(abs(coefs$t.value)))
 coefs
-coefs$element <-rep("grassN",5)
+coefs$element <-rep("grassN",6)
 coefsN<-coefs
 
 #######################grass P
-pmod <- lmer(lg_P ~ sbison_dens + scattle_dens + sPD_poo + sghop_m2_est + (1|site), data = est)
+pmod <- lmer(lg_P ~ sbison_dens + scattle_dens + sPD_poo + sghop_m2_est + smonth +(1|site), data = est)
 summary(pmod)
 confint(pmod)
 # extract coefficients
@@ -74,12 +73,12 @@ coefs <- data.frame(coef(summary(pmod)))
 # use normal distribution to approximate p-value
 coefs$p.z <- 2 * (1 - pnorm(abs(coefs$t.value)))
 coefs
-coefs$element <-rep("grassP",5)
+coefs$element <-rep("grassP",6)
 coefsP<-coefs
-resp<- rbind(coefsN[2:5,],coefsP[2:5,])
+resp<- rbind(coefsN[2:6,],coefsP[2:6,])
 
 #######################grass K
-pmod <- lmer(lg_K ~ sbison_dens + scattle_dens + sPD_poo + sghop_m2_est + (1|site), data = est)
+pmod <- lmer(lg_K ~ sbison_dens + scattle_dens + sPD_poo + sghop_m2_est + smonth +(1|site), data = est)
 summary(pmod)
 confint(pmod)
 # extract coefficients
@@ -87,12 +86,12 @@ coefs <- data.frame(coef(summary(pmod)))
 # use normal distribution to approximate p-value
 coefs$p.z <- 2 * (1 - pnorm(abs(coefs$t.value)))
 coefs
-coefs$element <-rep("grassK",5)
+coefs$element <-rep("grassK",6)
 coefsK<-coefs
-resp<- rbind(resp,coefsK[2:5,])
+resp<- rbind(resp,coefsK[2:6,])
 
 #######################grass Mg
-pmod <- lmer(lg_Mg ~ sbison_dens + scattle_dens + sPD_poo + sghop_m2_est + (1|site), data = est)
+pmod <- lmer(lg_Mg ~ sbison_dens + scattle_dens + sPD_poo + sghop_m2_est + smonth +(1|site), data = est)
 summary(pmod)
 confint(pmod)
 # extract coefficients
@@ -100,12 +99,12 @@ coefs <- data.frame(coef(summary(pmod)))
 # use normal distribution to approximate p-value
 coefs$p.z <- 2 * (1 - pnorm(abs(coefs$t.value)))
 coefs
-coefs$element <-rep("grassMg",5)
+coefs$element <-rep("grassMg",6)
 coefsMg<-coefs
-resp<- rbind(resp,coefsMg[2:5,])
+resp<- rbind(resp,coefsMg[2:6,])
 
 #######################grass Na
-pmod <- lmer(lg_Na ~ sbison_dens + scattle_dens + sPD_poo + sghop_m2_est + (1|site), data = est)
+pmod <- lmer(lg_Na ~ sbison_dens + scattle_dens + sPD_poo + sghop_m2_est + smonth +(1|site), data = est)
 summary(pmod)
 confint(pmod)
 # extract coefficients
@@ -113,12 +112,12 @@ coefs <- data.frame(coef(summary(pmod)))
 # use normal distribution to approximate p-value
 coefs$p.z <- 2 * (1 - pnorm(abs(coefs$t.value)))
 coefs
-coefs$element <-rep("grassNa",5)
+coefs$element <-rep("grassNa",6)
 coefsNa<-coefs
-resp<- rbind(resp,coefsNa[2:5,])
+resp<- rbind(resp,coefsNa[2:6,])
 
 #######################grass Si
-pmod <- lmer(lg_Si ~ sbison_dens + scattle_dens + sPD_poo + sghop_m2_est + (1|site), data = est, na.action = na.exclude)
+pmod <- lmer(lg_Si ~ sbison_dens + scattle_dens + sPD_poo + sghop_m2_est + smonth +(1|site), data = est, na.action = na.exclude)
 summary(pmod)
 confint(pmod)
 # extract coefficients
@@ -126,14 +125,14 @@ coefs <- data.frame(coef(summary(pmod)))
 # use normal distribution to approximate p-value
 coefs$p.z <- 2 * (1 - pnorm(abs(coefs$t.value)))
 coefs
-coefs$element <-rep("grassSi",5)
+coefs$element <-rep("grassSi",6)
 coefsSi<-coefs
-resp<- rbind(resp,coefsSi[2:5,])
+resp<- rbind(resp,coefsSi[2:6,])
 ######################################################################
 ##############################################################################
 
 #######################forb N
-pmod <- lmer(lf_N ~ sbison_dens + scattle_dens + sPD_poo + sghop_m2_est + (1|site), data = est)
+pmod <- lmer(lf_N ~ sbison_dens + scattle_dens + sPD_poo + sghop_m2_est + smonth +(1|site), data = est)
 summary(pmod)
 confint(pmod)
 # extract coefficients
@@ -141,12 +140,12 @@ coefs <- data.frame(coef(summary(pmod)))
 # use normal distribution to approximate p-value
 coefs$p.z <- 2 * (1 - pnorm(abs(coefs$t.value)))
 coefs
-coefs$element <-rep("forbN",5)
+coefs$element <-rep("forbN",6)
 coefsN<-coefs
-resp<- rbind(resp,coefsN[2:5,])
+resp<- rbind(resp,coefsN[2:6,])
 
 #######################forb P
-pmod <- lmer(lf_P ~ sbison_dens + scattle_dens + sPD_poo + sghop_m2_est + (1|site), data = est)
+pmod <- lmer(lf_P ~ sbison_dens + scattle_dens + sPD_poo + sghop_m2_est + smonth +(1|site), data = est)
 summary(pmod)
 confint(pmod)
 # extract coefficients
@@ -154,12 +153,12 @@ coefs <- data.frame(coef(summary(pmod)))
 # use normal distribution to approximate p-value
 coefs$p.z <- 2 * (1 - pnorm(abs(coefs$t.value)))
 coefs
-coefs$element <-rep("forbP",5)
+coefs$element <-rep("forbP",6)
 coefsP<-coefs
-resp<- rbind(resp,coefsP[2:5,])
+resp<- rbind(resp,coefsP[2:6,])
 
 #######################forb K
-pmod <- lmer(lf_K ~ sbison_dens + scattle_dens + sPD_poo + sghop_m2_est + (1|site), data = est)
+pmod <- lmer(lf_K ~ sbison_dens + scattle_dens + sPD_poo + sghop_m2_est + smonth +(1|site), data = est)
 summary(pmod)
 confint(pmod)
 # extract coefficients
@@ -167,12 +166,12 @@ coefs <- data.frame(coef(summary(pmod)))
 # use normal distribution to approximate p-value
 coefs$p.z <- 2 * (1 - pnorm(abs(coefs$t.value)))
 coefs
-coefs$element <-rep("forbK",5)
+coefs$element <-rep("forbK",6)
 coefsK<-coefs
-resp<- rbind(resp,coefsK[2:5,])
+resp<- rbind(resp,coefsK[2:6,])
 
 #######################forb Mg
-pmod <- lmer(lf_Mg ~ sbison_dens + scattle_dens + sPD_poo + sghop_m2_est + (1|site), data = est)
+pmod <- lmer(lf_Mg ~ sbison_dens + scattle_dens + sPD_poo + sghop_m2_est + smonth +(1|site), data = est)
 summary(pmod)
 confint(pmod)
 # extract coefficients
@@ -180,12 +179,12 @@ coefs <- data.frame(coef(summary(pmod)))
 # use normal distribution to approximate p-value
 coefs$p.z <- 2 * (1 - pnorm(abs(coefs$t.value)))
 coefs
-coefs$element <-rep("forbMg",5)
+coefs$element <-rep("forbMg",6)
 coefsMg<-coefs
-resp<- rbind(resp,coefsMg[2:5,])
+resp<- rbind(resp,coefsMg[2:6,])
 
 #######################forb Na
-pmod <- lmer(lf_Na ~ sbison_dens + scattle_dens + sPD_poo + sghop_m2_est + (1|site), data = est)
+pmod <- lmer(lf_Na ~ sbison_dens + scattle_dens + sPD_poo + sghop_m2_est + smonth +(1|site), data = est)
 summary(pmod)
 confint(pmod)
 # extract coefficients
@@ -193,12 +192,12 @@ coefs <- data.frame(coef(summary(pmod)))
 # use normal distribution to approximate p-value
 coefs$p.z <- 2 * (1 - pnorm(abs(coefs$t.value)))
 coefs
-coefs$element <-rep("forbNa",5)
+coefs$element <-rep("forbNa",6)
 coefsNa<-coefs
-resp<- rbind(resp,coefsNa[2:5,])
+resp<- rbind(resp,coefsNa[2:6,])
 
 #######################forb Si
-pmod <- lmer(lf_Si ~ sbison_dens + scattle_dens + sPD_poo + sghop_m2_est + (1|site), data = est)
+pmod <- lmer(lf_Si ~ sbison_dens + scattle_dens + sPD_poo + sghop_m2_est + smonth +(1|site), data = est)
 summary(pmod)
 confint(pmod)
 # extract coefficients
@@ -206,14 +205,14 @@ coefs <- data.frame(coef(summary(pmod)))
 # use normal distribution to approximate p-value
 coefs$p.z <- 2 * (1 - pnorm(abs(coefs$t.value)))
 coefs
-coefs$element <-rep("forbSi",5)
+coefs$element <-rep("forbSi",6)
 coefsSi<-coefs
-resp <- rbind(resp,coefsSi[2:5,])
+resp <- rbind(resp,coefsSi[2:6,])
 ######################################################################
 ##############################################################################
 
 #######################soil C
-pmod <- lmer(ls_C ~ sbison_dens + scattle_dens + sPD_poo + sghop_m2_est + (1|site), data = est)
+pmod <- lmer(ls_C ~ sbison_dens + scattle_dens + sPD_poo + sghop_m2_est + smonth +(1|site), data = est)
 summary(pmod)
 confint(pmod)
 # extract coefficients
@@ -221,13 +220,13 @@ coefs <- data.frame(coef(summary(pmod)))
 # use normal distribution to approximate p-value
 coefs$p.z <- 2 * (1 - pnorm(abs(coefs$t.value)))
 coefs
-coefs$element <-rep("soilC",5)
+coefs$element <-rep("soilC",6)
 coefsC<-coefs
-resp <- rbind(resp,coefsC[2:5,])
+resp <- rbind(resp,coefsC[2:6,])
 
 #######################soil N
 #pmod <- lmer(ls_N ~ trt+ (1|site), data = est) ##this approach compares everything to bison and does not take into account bison on pd towns
-pmod <- lmer(ls_N ~ sbison_dens + scattle_dens + sPD_poo + sghop_m2_est + (1|site), data = est)
+pmod <- lmer(ls_N ~ sbison_dens + scattle_dens + sPD_poo + sghop_m2_est + smonth +(1|site), data = est)
 summary(pmod)
 confint(pmod)
 # extract coefficients
@@ -235,12 +234,12 @@ coefs <- data.frame(coef(summary(pmod)))
 # use normal distribution to approximate p-value
 coefs$p.z <- 2 * (1 - pnorm(abs(coefs$t.value)))
 coefs
-coefs$element <-rep("soilN",5)
+coefs$element <-rep("soilN",6)
 coefsN<-coefs
-resp<- rbind(resp,coefsN[2:5,])
+resp<- rbind(resp,coefsN[2:6,])
 
 #######################soil P
-pmod <- lmer(ls_P ~ sbison_dens + scattle_dens + sPD_poo + sghop_m2_est + (1|site), data = est)
+pmod <- lmer(ls_P ~ sbison_dens + scattle_dens + sPD_poo + sghop_m2_est + smonth +(1|site), data = est)
 summary(pmod)
 confint(pmod)
 # extract coefficients
@@ -248,12 +247,12 @@ coefs <- data.frame(coef(summary(pmod)))
 # use normal distribution to approximate p-value
 coefs$p.z <- 2 * (1 - pnorm(abs(coefs$t.value)))
 coefs
-coefs$element <-rep("soilP",5)
+coefs$element <-rep("soilP",6)
 coefsP<-coefs
-resp<- rbind(resp,coefsP[2:5,])
+resp<- rbind(resp,coefsP[2:6,])
 
 #######################soil K
-pmod <- lmer(ls_K ~ sbison_dens + scattle_dens + sPD_poo + sghop_m2_est + (1|site), data = est)
+pmod <- lmer(ls_K ~ sbison_dens + scattle_dens + sPD_poo + sghop_m2_est + smonth +(1|site), data = est)
 summary(pmod)
 confint(pmod)
 # extract coefficients
@@ -261,12 +260,12 @@ coefs <- data.frame(coef(summary(pmod)))
 # use normal distribution to approximate p-value
 coefs$p.z <- 2 * (1 - pnorm(abs(coefs$t.value)))
 coefs
-coefs$element <-rep("soilK",5)
+coefs$element <-rep("soilK",6)
 coefsK<-coefs
-resp<- rbind(resp,coefsK[2:5,])
+resp<- rbind(resp,coefsK[2:6,])
 
 #######################soil Mg
-pmod <- lmer(ls_Mg ~ sbison_dens + scattle_dens + sPD_poo + sghop_m2_est + (1|site), data = est)
+pmod <- lmer(ls_Mg ~ sbison_dens + scattle_dens + sPD_poo + sghop_m2_est + smonth +(1|site), data = est)
 summary(pmod)
 confint(pmod)
 # extract coefficients
@@ -274,12 +273,12 @@ coefs <- data.frame(coef(summary(pmod)))
 # use normal distribution to approximate p-value
 coefs$p.z <- 2 * (1 - pnorm(abs(coefs$t.value)))
 coefs
-coefs$element <-rep("soilMg",5)
+coefs$element <-rep("soilMg",6)
 coefsMg<-coefs
-resp<- rbind(resp,coefsMg[2:5,])
+resp<- rbind(resp,coefsMg[2:6,])
 
 #######################soil Na
-pmod <- lmer(ls_Na ~ sbison_dens + scattle_dens + sPD_poo + sghop_m2_est + (1|site), data = est)
+pmod <- lmer(ls_Na ~ sbison_dens + scattle_dens + sPD_poo + sghop_m2_est + smonth +(1|site), data = est)
 summary(pmod)
 confint(pmod)
 # extract coefficients
@@ -287,9 +286,9 @@ coefs <- data.frame(coef(summary(pmod)))
 # use normal distribution to approximate p-value
 coefs$p.z <- 2 * (1 - pnorm(abs(coefs$t.value)))
 coefs
-coefs$element <-rep("soilNa",5)
+coefs$element <-rep("soilNa",6)
 coefsNa<-coefs
-respo<- rbind(resp,coefsNa[2:5,])
+respo<- rbind(resp,coefsNa[2:6,])
 
 ##############################################################
 ###############################################################################
