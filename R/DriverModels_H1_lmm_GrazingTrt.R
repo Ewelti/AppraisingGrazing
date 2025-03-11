@@ -10,6 +10,7 @@ setwd("/Users/julierebh/Downloads/AppraisingGrazing")
 
 ##load libraries
 library(lme4)
+library(MuMIn)
 
 ############################H1
 ##load data
@@ -57,6 +58,7 @@ coefs$p.z <- 2 * (1 - pnorm(abs(coefs$t.value)))
 coefs
 coefs$element <-rep("grassN",6)
 coefsN<-coefs
+r.squaredGLMM(pmod)
 
 #######################grass P
 pmod <- lmer(lg_P ~ trt + month + (1|site), data = est)
@@ -70,6 +72,7 @@ coefs
 coefs$element <-rep("grassP",6)
 coefsP<-coefs
 resp<- rbind(coefsN[2:6,],coefsP[2:6,])
+r.squaredGLMM(pmod)
 
 #######################grass K
 pmod <- lmer(lg_K ~ trt + month + (1|site), data = est)
@@ -83,6 +86,7 @@ coefs
 coefs$element <-rep("grassK",6)
 coefsK<-coefs
 resp<- rbind(resp,coefsK[2:6,])
+r.squaredGLMM(pmod)
 
 #######################grass Mg
 pmod <- lmer(lg_Mg ~ trt + month + (1|site), data = est)
@@ -96,6 +100,7 @@ coefs
 coefs$element <-rep("grassMg",6)
 coefsMg<-coefs
 resp<- rbind(resp,coefsMg[2:6,])
+r.squaredGLMM(pmod)
 
 #######################grass Na
 pmod <- lmer(lg_Na ~ trt + month + (1|site), data = est)
@@ -109,6 +114,7 @@ coefs
 coefs$element <-rep("grassNa",6)
 coefsNa<-coefs
 resp<- rbind(resp,coefsNa[2:6,])
+r.squaredGLMM(pmod)
 
 #######################grass Si
 pmod <- lmer(lg_Si ~ trt + month + (1|site), data = est)
@@ -122,6 +128,8 @@ coefs
 coefs$element <-rep("grassSi",6)
 coefsSi<-coefs
 resp<- rbind(resp,coefsSi[2:6,])
+r.squaredGLMM(pmod)
+
 ######################################################################
 ##############################################################################
 
@@ -137,6 +145,7 @@ coefs
 coefs$element <-rep("forbN",6)
 coefsN<-coefs
 resp<- rbind(resp,coefsN[2:6,])
+r.squaredGLMM(pmod)
 
 #######################forb P
 pmod <- lmer(lf_P ~ trt + month + (1|site), data = est)
@@ -150,6 +159,7 @@ coefs
 coefs$element <-rep("forbP",6)
 coefsP<-coefs
 resp<- rbind(resp,coefsP[2:6,])
+r.squaredGLMM(pmod)
 
 #######################forb K
 pmod <- lmer(lf_K ~ trt + month + (1|site), data = est)
@@ -163,6 +173,7 @@ coefs
 coefs$element <-rep("forbK",6)
 coefsK<-coefs
 resp<- rbind(resp,coefsK[2:6,])
+r.squaredGLMM(pmod)
 
 #######################forb Mg
 pmod <- lmer(lf_Mg ~ trt + month + (1|site), data = est)
@@ -176,6 +187,7 @@ coefs
 coefs$element <-rep("forbMg",6)
 coefsMg<-coefs
 resp<- rbind(resp,coefsMg[2:6,])
+r.squaredGLMM(pmod)
 
 #######################forb Na
 pmod <- lmer(lf_Na ~ trt + month + (1|site), data = est)
@@ -189,6 +201,7 @@ coefs
 coefs$element <-rep("forbNa",6)
 coefsNa<-coefs
 resp<- rbind(resp,coefsNa[2:6,])
+r.squaredGLMM(pmod)
 
 #######################forb Si
 pmod <- lmer(lf_Si ~ trt + month + (1|site), data = est)
@@ -202,6 +215,8 @@ coefs
 coefs$element <-rep("forbSi",6)
 coefsSi<-coefs
 resp <- rbind(resp,coefsSi[2:6,])
+r.squaredGLMM(pmod)
+
 ######################################################################
 ##############################################################################
 
@@ -217,6 +232,7 @@ coefs
 coefs$element <-rep("soilC",6)
 coefsC<-coefs
 resp <- rbind(resp,coefsC[2:6,])
+r.squaredGLMM(pmod)
 
 #######################soil N
 pmod <- lmer(ls_N ~ trt + month + (1|site), data = est)
@@ -230,6 +246,7 @@ coefs
 coefs$element <-rep("soilN",6)
 coefsN<-coefs
 resp<- rbind(resp,coefsN[2:6,])
+r.squaredGLMM(pmod)
 
 #######################soil P
 pmod <- lmer(ls_P ~ trt + month + (1|site), data = est)
@@ -243,6 +260,7 @@ coefs
 coefs$element <-rep("soilP",6)
 coefsP<-coefs
 resp<- rbind(resp,coefsP[2:6,])
+r.squaredGLMM(pmod)
 
 #######################soil K
 pmod <- lmer(ls_K ~ trt + month + (1|site), data = est)
@@ -256,6 +274,7 @@ coefs
 coefs$element <-rep("soilK",6)
 coefsK<-coefs
 resp<- rbind(resp,coefsK[2:6,])
+r.squaredGLMM(pmod)
 
 #######################soil Mg
 pmod <- lmer(ls_Mg ~ trt + month + (1|site), data = est)
@@ -269,6 +288,7 @@ coefs
 coefs$element <-rep("soilMg",6)
 coefsMg<-coefs
 resp<- rbind(resp,coefsMg[2:6,])
+r.squaredGLMM(pmod)
 
 #######################soil Na
 pmod <- lmer(ls_Na ~ trt + month + (1|site), data = est)
@@ -282,6 +302,7 @@ coefs
 coefs$element <-rep("soilNa",6)
 coefsNa<-coefs
 resp<- rbind(resp,coefsNa[2:6,])
+r.squaredGLMM(pmod)
 
 ##############################################################
 ###############################################################################

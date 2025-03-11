@@ -12,6 +12,8 @@ setwd("/Users/julierebh/Downloads/AppraisingGrazing")
 #install.packages("stringr")
 library(lme4)
 library(stringr)
+library(MuMIn)
+
 ############################H2
 ##all data
 st <- read.csv("outputs/SiteMonthLevel.csv")
@@ -29,6 +31,7 @@ coefs <- data.frame(coef(summary(pmod)))
 # use normal distribution to approximate p-value
 coefs$p.z <- 2 * (1 - pnorm(abs(coefs$t.value)))
 coefs
+r.squaredGLMM(pmod)
 
 pds <- pm[ which(pm$trt=='untrtpd'), ]
 tpds <- pm[ which(pm$trt=='trtpd'), ]
