@@ -12,13 +12,16 @@ setwd("/Users/julierebh/Downloads/AppraisingGrazing")
 #install.packages("stringr")
 library(lme4)
 library(stringr)
+library(MuMIn)
+
 ############################H3
 
 #############H3 plant biomass
 ##all data
 pm <- read.csv("rawData/PastureMeter.csv")
 pm$trt <- as.factor(pm$trt)
-pm$month <- as.numeric(pm$month)
+pm$line <- as.factor(pm$line)
+pm$site <- as.factor(pm$site)
 head(pm)
 
 #effect of polynomial month on all pasture meter
@@ -45,6 +48,7 @@ coefs <- data.frame(coef(summary(mo_pmod)))
 coefs$p.z <- 2 * (1 - pnorm(abs(coefs$t.value)))
 coefs
 confint(mo_pmod)
+r.squaredGLMM(mo_pmod)
 
 ##cattle
 mo_pmod <- lmer(log10(g_per_m2+1) ~ poly(month,2) + (1|line:site), data = c)
@@ -52,6 +56,7 @@ coefs <- data.frame(coef(summary(mo_pmod)))
 coefs$p.z <- 2 * (1 - pnorm(abs(coefs$t.value)))
 coefs
 confint(mo_pmod)
+r.squaredGLMM(mo_pmod)
 
 ##ungrazed
 mo_pmod <- lmer(log10(g_per_m2+1) ~ poly(month,2) + (1|line:site), data = un)
@@ -59,6 +64,7 @@ coefs <- data.frame(coef(summary(mo_pmod)))
 coefs$p.z <- 2 * (1 - pnorm(abs(coefs$t.value)))
 coefs
 confint(mo_pmod)
+r.squaredGLMM(mo_pmod)
 
 ##untrtpd
 mo_pmod <- lmer(log10(g_per_m2+1) ~ poly(month,2) + (1|line:site), data = pd)
@@ -66,6 +72,7 @@ coefs <- data.frame(coef(summary(mo_pmod)))
 coefs$p.z <- 2 * (1 - pnorm(abs(coefs$t.value)))
 coefs
 confint(mo_pmod)
+r.squaredGLMM(mo_pmod)
 
 ##trtpd
 mo_pmod <- lmer(log10(g_per_m2+1) ~ poly(month,2) + (1|line:site), data = tp)
@@ -73,6 +80,8 @@ coefs <- data.frame(coef(summary(mo_pmod)))
 coefs$p.z <- 2 * (1 - pnorm(abs(coefs$t.value)))
 coefs
 confint(mo_pmod)
+r.squaredGLMM(mo_pmod)
+
 #################################
 
 ##################H3 nutrients
