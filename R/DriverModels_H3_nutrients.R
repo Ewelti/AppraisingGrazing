@@ -41,7 +41,7 @@ est$lf_Si <- log10(est$f_Si)
 #log scale soil chem
 est$ls_C <- log10(est$percC)
 est$ls_N <- log10(est$percN)
-est$ls_P <- log10(est$Ca_ppm)
+est$ls_P <- log10(est$P_ppm)
 est$ls_K <- log10(est$K_ppm)
 est$ls_Mg <- log10(est$Mg_ppm)
 est$ls_Na <- log10(est$Na_ppm)

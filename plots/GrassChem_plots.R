@@ -5,25 +5,57 @@ setwd("C:/Users/elwel/OneDrive/Desktop/AppraisingGrazing")
 library(lme4)
 library(stringr)
 library(plotrix)
+library(effects)
 
 #################plant chem
-# attach data
-chem <- read.csv("rawData/PlantChem.csv")
-head(chem)
-all_subw <- chem[chem$type=="woody",]
-all_subg <- as.data.frame(chem[chem$type=="grass",])
-all_subf <- chem[chem$type=="forb",]
+##load data
+est <- read.csv("outputs/SiteMonthLevel.csv")
+head(est)
+est$trt <- as.factor(est$trt)
+
+#log scale grass chem
+est$lg_N <- log10(est$g_N)
+est$lg_P <- log10(est$g_P)
+est$lg_K <- log10(est$g_K)
+est$lg_Mg <- log10(est$g_Mg)
+est$lg_Na <- log10(est$g_Na)
+est$lg_Si <- log10(est$g_Si)
+est["lg_Si"][est["lg_Si"] == "-Inf"] <- 0
 
 #means by trt
-chem$trt_mo_type <- paste(chem$trt,chem$mo,chem$type)
-chemsum <- aggregate(cbind(percC,percN,Ca_ppm,K_ppm,Mg_ppm,Na_ppm,P_ppm,Si_ppm) ~ trt_mo_type, data = chem, FUN = function(x)c(mean = mean(x),se = std.error(x)))
+est$trt_mo <- paste(est$trt,est$month)
+chemsum <- aggregate(cbind(lg_N,lg_P,lg_K,lg_Mg,lg_Na,lg_Si) ~ trt_mo, data = est, FUN = function(x)c(mean = mean(x),se = std.error(x)))
 head(chemsum)
 
-chemsum[c('trt', 'month','type')] <- str_split_fixed(chemsum$trt_mo_type, ' ', 3)
+chemsum[c('trt', 'month')] <- str_split_fixed(chemsum$trt_mo, ' ', 2)
 chemsum$month <-as.numeric(chemsum$month)
-subw <- chemsum[chemsum$type=="woody",]
-subg <- as.data.frame(chemsum[chemsum$type=="grass",])
-subf <- chemsum[chemsum$type=="forb",]
+chemi <- as.data.frame(chemsum)
+
+#subset by trt
+b <- est[est$trt=="bison",]
+ca <- est[est$trt=="cattle",]
+un <- est[est$trt=="ungrazed",]
+pd <- est[est$trt=="untrtpd",]
+tp <- est[est$trt=="trtpd",]
+
+##color function for making transparent colors
+t_col <- function(color, percent = 50, name = NULL) {
+  #      color = color name
+  #    percent = % transparency
+  #       name = an optional name for the color
+
+## Get RGB values for named color
+rgb.val <- col2rgb(color)
+
+## Make new color using input color as base and alpha set by transparency
+t.col <- rgb(rgb.val[1], rgb.val[2], rgb.val[3],
+             max = 255,
+             alpha = (100 - percent) * 255 / 100,
+             names = name)
+
+## Save the color
+invisible(t.col)
+}
 
 ################
 tiff(filename = "plots/GrassChem_individualPlots.tif", width = 9, height = 5, units = 'in', res = 600, compression = 'lzw')
@@ -31,412 +63,341 @@ tiff(filename = "plots/GrassChem_individualPlots.tif", width = 9, height = 5, un
 par(mar=c(2.5,5,0.2,0.2),mfrow=c(2,3))
 
 ##grass N
-plot(1, type="n", xlim=c(5.5,9.5), ylim=c(0.5,3),las=1,ylab="",xlab="", xaxt='n')
+nut <- na.omit(est$lg_N)
+min(nut)
+max(nut)
+plot(1, type="n", xlim=c(5.9,9.1), ylim=c(-0.2,0.55), ylab="",xlab="", xaxt='n', yaxt='n')
+axis(2, at=c(log10(0.5),log10(1),log10(1.5),log10(2),log10(2.5),log10(3)), labels=c(0.5,1,1.5,2,2.5,3),las=1)
 axis(1, at=c(6,7,8,9),cex.axis=1,labels=c("Jun","Jul","Aug","Sept"))
 box(lwd=2)
 title(ylab="Grass %N", line=3, cex.lab=1.6)
 ##bison
-x1 <- all_subg$mo[all_subg$trt=="bison"]
-y1 <- all_subg$percN[all_subg$trt=="bison"]
-mod <- lm(y1 ~ x1)
-summary(mod)
-## predict values across range
-newdat <- data.frame(x = seq(6,9, length = length(x1)))
-newdat <- within(newdat, ypred <- predict(mod, newdat))
-## add these predictions as a line to the plot
-lines(ypred ~ x1, data = newdat, col = "sienna", lwd = 2)
+cm <- lmer(lg_N ~ month + (1|site), data=b)
+mo_e <- Effect("month", partial.residuals=T, cm)
+mo_e <- data.frame(mo_e)
+# add fill
+polygon(c(rev(mo_e$month), mo_e$month), c(rev(mo_e$upper), mo_e$lower), col=t_col("sienna", perc = 70), border = NA)
 #points
-points(subg$percN[,1][subg$trt=="bison"] ~ subg$month[subg$trt=="bison"],pch=21,col="sienna",bg="sienna",cex=2)
-#points(subg$percN[,1][subg$trt=="bison"] ~ subg$month[subg$trt=="bison"],type="l",col="sienna",lwd=2)
-arrows(subg$month[subg$trt=="bison"], subg$percN[,1][subg$trt=="bison"]-subg$percN[,2][subg$trt=="bison"], subg$month[subg$trt=="bison"], subg$percN[,1][subg$trt=="bison"]+subg$percN[,2][subg$trt=="bison"],col="sienna",lwd=2,length=0.05, angle=90, code=3)
+points(chemi$lg_N[,1][chemi$trt=="bison"] ~ chemi$month[chemi$trt=="bison"],pch=21,col="sienna",bg="sienna",cex=2)
+points(mo_e$fit ~ mo_e$month,type="l",col="sienna",lwd=2)
+arrows(chemi$month[chemi$trt=="bison"], chemi$lg_N[,1][chemi$trt=="bison"]-chemi$lg_N[,2][chemi$trt=="bison"], chemi$month[chemi$trt=="bison"], chemi$lg_N[,1][chemi$trt=="bison"]+chemi$lg_N[,2][chemi$trt=="bison"],col="sienna",lwd=2,length=0.05, angle=90, code=3)
 
 ##cattle
-x1 <- all_subg$mo[all_subg$trt=="cattle"]
-y1 <- all_subg$percN[all_subg$trt=="cattle"]
-mod <- lm(y1 ~ x1)
-summary(mod)
-## predict values across range
-newdat <- data.frame(x = seq(6,9, length = length(x1)))
-newdat <- within(newdat, ypred <- predict(mod, newdat))
-## add these predictions as a line to the plot
-lines(ypred ~ x1, data = newdat, col = "gray0", lwd = 2)
+cm <- lmer(lg_N ~ month + (1|site), data=ca)
+mo_e <- Effect("month", partial.residuals=T, cm)
+mo_e <- data.frame(mo_e)
+# add fill
+polygon(c(rev(mo_e$month), mo_e$month), c(rev(mo_e$upper), mo_e$lower), col=t_col("gray0", perc = 70), border = NA)
 #points
-points(subg$percN[,1][subg$trt=="cattle"] ~ subg$month[subg$trt=="cattle"],pch=22,col="gray0",bg="gray0",cex=2)
-#points(subg$percN[,1][subg$trt=="cattle"] ~ subg$month[subg$trt=="cattle"],type="l",col="gray0",lwd=2)
-arrows(subg$month[subg$trt=="cattle"], subg$percN[,1][subg$trt=="cattle"]-subg$percN[,2][subg$trt=="cattle"], subg$month[subg$trt=="cattle"], subg$percN[,1][subg$trt=="cattle"]+subg$percN[,2][subg$trt=="cattle"],col="gray0",lwd=2,length=0.05, angle=90, code=3)
+points(chemi$lg_N[,1][chemi$trt=="cattle"] ~ chemi$month[chemi$trt=="cattle"],pch=22,col="gray0",bg="gray0",cex=2)
+points(mo_e$fit ~ mo_e$month,type="l",col="gray0",lwd=2)
+arrows(chemi$month[chemi$trt=="cattle"], chemi$lg_N[,1][chemi$trt=="cattle"]-chemi$lg_N[,2][chemi$trt=="cattle"], chemi$month[chemi$trt=="cattle"], chemi$lg_N[,1][chemi$trt=="cattle"]+chemi$lg_N[,2][chemi$trt=="cattle"],col="gray0",lwd=2,length=0.05, angle=90, code=3)
 
 ##ungrazed
-x1 <- all_subg$mo[all_subg$trt=="ungrazed"]
-y1 <- all_subg$percN[all_subg$trt=="ungrazed"]
-mod <- lm(y1 ~ x1)
-summary(mod)
-## predict values across range
-newdat <- data.frame(x = seq(6,9, length = length(x1)))
-newdat <- within(newdat, ypred <- predict(mod, newdat))
-## add these predictions as a line to the plot
-lines(ypred ~ x1, data = newdat, col = "dodgerblue", lwd = 2)
+cm <- lmer(lg_N ~ month + (1|site), data=un)
+mo_e <- Effect("month", partial.residuals=T, cm)
+mo_e <- data.frame(mo_e)
+# add fill
+polygon(c(rev(mo_e$month), mo_e$month), c(rev(mo_e$upper), mo_e$lower), col=t_col("dodgerblue", perc = 70), border = NA)
 #points
-points(subg$percN[,1][subg$trt=="ungrazed"] ~ subg$month[subg$trt=="ungrazed"],pch=23,col="dodgerblue",bg="dodgerblue",cex=2)
-#points(subg$percN[,1][subg$trt=="ungrazed"] ~ subg$month[subg$trt=="ungrazed"],type="l",col="dodgerblue",lwd=2)
-arrows(subg$month[subg$trt=="ungrazed"], subg$percN[,1][subg$trt=="ungrazed"]-subg$percN[,2][subg$trt=="ungrazed"], subg$month[subg$trt=="ungrazed"], subg$percN[,1][subg$trt=="ungrazed"]+subg$percN[,2][subg$trt=="ungrazed"],col="dodgerblue",lwd=2,length=0.05, angle=90, code=3)
+points(chemi$lg_N[,1][chemi$trt=="ungrazed"] ~ chemi$month[chemi$trt=="ungrazed"],pch=23,col="dodgerblue",bg="dodgerblue",cex=2)
+points(mo_e$fit ~ mo_e$month,type="l",col="dodgerblue",lwd=2)
+arrows(chemi$month[chemi$trt=="ungrazed"], chemi$lg_N[,1][chemi$trt=="ungrazed"]-chemi$lg_N[,2][chemi$trt=="ungrazed"], chemi$month[chemi$trt=="ungrazed"], chemi$lg_N[,1][chemi$trt=="ungrazed"]+chemi$lg_N[,2][chemi$trt=="ungrazed"],col="dodgerblue",lwd=2,length=0.05, angle=90, code=3)
 
 ##trtpd
-x1 <- all_subg$mo[all_subg$trt=="trtpd"]
-y1 <- all_subg$percN[all_subg$trt=="trtpd"]
-mod <- lm(y1 ~ x1)
-summary(mod)
-## predict values across range
-newdat <- data.frame(x = seq(6,8, length = length(x1)))
-newdat <- within(newdat, ypred <- predict(mod, newdat))
-## add these predictions as a line to the plot
-lines(ypred ~ x1, data = newdat, col = "firebrick2", lwd = 2)
+cm <- lmer(lg_N ~ month + (1|site), data=tp)
+mo_e <- Effect("month", partial.residuals=T, cm)
+mo_e <- data.frame(mo_e)
+# add fill
+#polygon(c(rev(mo_e$month), mo_e$month), c(rev(mo_e$upper), mo_e$lower), col=t_col("firebrick2", perc = 70), border = NA)
 #points
-points(subg$percN[,1][subg$trt=="trtpd"] ~ subg$month[subg$trt=="trtpd"],pch=24,col="firebrick2",bg="firebrick2",cex=2)
-#points(subg$percN[,1][subg$trt=="trtpd"] ~ subg$month[subg$trt=="trtpd"],type="l",col="firebrick2",lwd=2)
-arrows(subg$month[subg$trt=="trtpd"], subg$percN[,1][subg$trt=="trtpd"]-subg$percN[,2][subg$trt=="trtpd"], subg$month[subg$trt=="trtpd"], subg$percN[,1][subg$trt=="trtpd"]+subg$percN[,2][subg$trt=="trtpd"],col="firebrick2",lwd=2,length=0.05, angle=90, code=3)
+points(chemi$lg_N[,1][chemi$trt=="trtpd"] ~ chemi$month[chemi$trt=="trtpd"],pch=24,col="firebrick2",bg="firebrick2",cex=2)
+#points(mo_e$fit ~ mo_e$month,type="l",col="firebrick2",lwd=2)
+arrows(chemi$month[chemi$trt=="trtpd"], chemi$lg_N[,1][chemi$trt=="trtpd"]-chemi$lg_N[,2][chemi$trt=="trtpd"], chemi$month[chemi$trt=="trtpd"], chemi$lg_N[,1][chemi$trt=="trtpd"]+chemi$lg_N[,2][chemi$trt=="trtpd"],col="firebrick2",lwd=2,length=0.05, angle=90, code=3)
 
 ##untrtpd
-x1 <- all_subg$mo[all_subg$trt=="untrtpd"]
-y1 <- all_subg$percN[all_subg$trt=="untrtpd"]
-mod <- lm(y1 ~ x1)
-## predict values across range
-newdat <- data.frame(x = seq(6,8, length = length(x1)))
-newdat <- within(newdat, ypred <- predict(mod, newdat))
-## add these predictions as a line to the plot
-lines(ypred ~ x1, data = newdat, col = "goldenrod2", lwd = 2)
+cm <- lmer(lg_N ~ month + (1|site), data=pd)
+mo_e <- Effect("month", partial.residuals=T, cm)
+mo_e <- data.frame(mo_e)
+# add fill
+polygon(c(rev(mo_e$month), mo_e$month), c(rev(mo_e$upper), mo_e$lower), col=t_col("goldenrod2", perc = 70), border = NA)
 #points
-points(subg$percN[,1][subg$trt=="untrtpd"] ~ subg$month[subg$trt=="untrtpd"],pch=25,col="goldenrod2",bg="goldenrod2",cex=2)
-#points(subg$percN[,1][subg$trt=="untrtpd"] ~ subg$month[subg$trt=="untrtpd"],type="l",col="goldenrod2",lwd=2)
-arrows(subg$month[subg$trt=="untrtpd"], subg$percN[,1][subg$trt=="untrtpd"]-subg$percN[,2][subg$trt=="untrtpd"], subg$month[subg$trt=="untrtpd"], subg$percN[,1][subg$trt=="untrtpd"]+subg$percN[,2][subg$trt=="untrtpd"],col="goldenrod2",lwd=2,length=0.05, angle=90, code=3)
+points(chemi$lg_N[,1][chemi$trt=="untrtpd"] ~ chemi$month[chemi$trt=="untrtpd"],pch=25,col="goldenrod2",bg="goldenrod2",cex=2)
+points(mo_e$fit ~ mo_e$month,type="l",col="goldenrod2",lwd=2)
+arrows(chemi$month[chemi$trt=="untrtpd"], chemi$lg_N[,1][chemi$trt=="untrtpd"]-chemi$lg_N[,2][chemi$trt=="untrtpd"], chemi$month[chemi$trt=="untrtpd"], chemi$lg_N[,1][chemi$trt=="untrtpd"]+chemi$lg_N[,2][chemi$trt=="untrtpd"],col="goldenrod2",lwd=2,length=0.05, angle=90, code=3)
+
 legend("topright", legend=("A"), bty="n", cex=1.5)
 
 #####################################################
 ##grass P
-plot(1, type="n", xlim=c(5.5,9.5), ylim=c(600,2700),las=1,ylab="",xlab="", xaxt='n')
+nut <- na.omit(est$lg_P)
+min(nut)
+max(nut)
+plot(1, type="n", xlim=c(5.9,9.1), ylim=c(2.7,3.5), ylab="",xlab="", xaxt='n', yaxt='n')
+axis(2, at=c(log10(500),log10(1000),log10(1500),log10(2000),log10(2500)), labels=c(500,1000,1500,2000,2500),las=1)
 axis(1, at=c(6,7,8,9),cex.axis=1,labels=c("Jun","Jul","Aug","Sept"))
 box(lwd=2)
-title(ylab="Grass ppm P", line=3.5, cex.lab=1.6)
+title(ylab="Grass ppm P", line=3, cex.lab=1.6)
+
 ##bison
-x1 <- all_subg$mo[all_subg$trt=="bison"]
-y1 <- all_subg$P_ppm[all_subg$trt=="bison"]
-mod <- lm(y1 ~ x1)
-summary(mod)
-## predict values across range
-newdat <- data.frame(x = seq(6,9, length = length(x1)))
-newdat <- within(newdat, ypred <- predict(mod, newdat))
-## add these predictions as a line to the plot
-lines(ypred ~ x1, data = newdat, col = "sienna", lwd = 2, lty = 2)
+cm <- lmer(lg_P ~ month + (1|site), data=b)
+mo_e <- Effect("month", partial.residuals=T, cm)
+mo_e <- data.frame(mo_e)
+# add fill
+polygon(c(rev(mo_e$month), mo_e$month), c(rev(mo_e$upper), mo_e$lower), col=t_col("sienna", perc = 70), border = NA)
 #points
-points(subg$P_ppm[,1][subg$trt=="bison"] ~ subg$month[subg$trt=="bison"],pch=21,col="sienna",bg="sienna",cex=2)
-#points(subg$P_ppm[,1][subg$trt=="bison"] ~ subg$month[subg$trt=="bison"],type="l",col="sienna",lwd=2)
-arrows(subg$month[subg$trt=="bison"], subg$P_ppm[,1][subg$trt=="bison"]-subg$P_ppm[,2][subg$trt=="bison"], subg$month[subg$trt=="bison"], subg$P_ppm[,1][subg$trt=="bison"]+subg$P_ppm[,2][subg$trt=="bison"],col="sienna",lwd=2,length=0.05, angle=90, code=3)
+points(chemi$lg_P[,1][chemi$trt=="bison"] ~ chemi$month[chemi$trt=="bison"],pch=21,col="sienna",bg="sienna",cex=2)
+points(mo_e$fit ~ mo_e$month,type="l",col="sienna",lwd=2)
+arrows(chemi$month[chemi$trt=="bison"], chemi$lg_P[,1][chemi$trt=="bison"]-chemi$lg_P[,2][chemi$trt=="bison"], chemi$month[chemi$trt=="bison"], chemi$lg_P[,1][chemi$trt=="bison"]+chemi$lg_P[,2][chemi$trt=="bison"],col="sienna",lwd=2,length=0.05, angle=90, code=3)
 
 ##cattle
-x1 <- all_subg$mo[all_subg$trt=="cattle"]
-y1 <- all_subg$P_ppm[all_subg$trt=="cattle"]
-mod <- lm(y1 ~ x1)
-summary(mod)
-## predict values across range
-newdat <- data.frame(x = seq(6,9, length = length(x1)))
-newdat <- within(newdat, ypred <- predict(mod, newdat))
-## add these predictions as a line to the plot
-lines(ypred ~ x1, data = newdat, col = "gray0", lwd = 2)
+cm <- lmer(lg_P ~ month + (1|site), data=ca)
+mo_e <- Effect("month", partial.residuals=T, cm)
+mo_e <- data.frame(mo_e)
+# add fill
+polygon(c(rev(mo_e$month), mo_e$month), c(rev(mo_e$upper), mo_e$lower), col=t_col("gray0", perc = 70), border = NA)
 #points
-points(subg$P_ppm[,1][subg$trt=="cattle"] ~ subg$month[subg$trt=="cattle"],pch=22,col="gray0",bg="gray0",cex=2)
-#points(subg$P_ppm[,1][subg$trt=="cattle"] ~ subg$month[subg$trt=="cattle"],type="l",col="gray0",lwd=2)
-arrows(subg$month[subg$trt=="cattle"], subg$P_ppm[,1][subg$trt=="cattle"]-subg$P_ppm[,2][subg$trt=="cattle"], subg$month[subg$trt=="cattle"], subg$P_ppm[,1][subg$trt=="cattle"]+subg$P_ppm[,2][subg$trt=="cattle"],col="gray0",lwd=2,length=0.05, angle=90, code=3)
+points(chemi$lg_P[,1][chemi$trt=="cattle"] ~ chemi$month[chemi$trt=="cattle"],pch=22,col="gray0",bg="gray0",cex=2)
+points(mo_e$fit ~ mo_e$month,type="l",col="gray0",lwd=2)
+arrows(chemi$month[chemi$trt=="cattle"], chemi$lg_P[,1][chemi$trt=="cattle"]-chemi$lg_P[,2][chemi$trt=="cattle"], chemi$month[chemi$trt=="cattle"], chemi$lg_P[,1][chemi$trt=="cattle"]+chemi$lg_P[,2][chemi$trt=="cattle"],col="gray0",lwd=2,length=0.05, angle=90, code=3)
 
 ##ungrazed
-x1 <- all_subg$mo[all_subg$trt=="ungrazed"]
-y1 <- all_subg$P_ppm[all_subg$trt=="ungrazed"]
-mod <- lm(y1 ~ x1)
-summary(mod)
-## predict values across range
-newdat <- data.frame(x = seq(6,9, length = length(x1)))
-newdat <- within(newdat, ypred <- predict(mod, newdat))
-## add these predictions as a line to the plot
-lines(ypred ~ x1, data = newdat, col = "dodgerblue", lwd = 2)
+cm <- lmer(lg_P ~ month + (1|site), data=un)
+mo_e <- Effect("month", partial.residuals=T, cm)
+mo_e <- data.frame(mo_e)
+# add fill
+polygon(c(rev(mo_e$month), mo_e$month), c(rev(mo_e$upper), mo_e$lower), col=t_col("dodgerblue", perc = 70), border = NA)
 #points
-points(subg$P_ppm[,1][subg$trt=="ungrazed"] ~ subg$month[subg$trt=="ungrazed"],pch=23,col="dodgerblue",bg="dodgerblue",cex=2)
-#points(subg$P_ppm[,1][subg$trt=="ungrazed"] ~ subg$month[subg$trt=="ungrazed"],type="l",col="dodgerblue",lwd=2)
-arrows(subg$month[subg$trt=="ungrazed"], subg$P_ppm[,1][subg$trt=="ungrazed"]-subg$P_ppm[,2][subg$trt=="ungrazed"], subg$month[subg$trt=="ungrazed"], subg$P_ppm[,1][subg$trt=="ungrazed"]+subg$P_ppm[,2][subg$trt=="ungrazed"],col="dodgerblue",lwd=2,length=0.05, angle=90, code=3)
+points(chemi$lg_P[,1][chemi$trt=="ungrazed"] ~ chemi$month[chemi$trt=="ungrazed"],pch=23,col="dodgerblue",bg="dodgerblue",cex=2)
+points(mo_e$fit ~ mo_e$month,type="l",col="dodgerblue",lwd=2)
+arrows(chemi$month[chemi$trt=="ungrazed"], chemi$lg_P[,1][chemi$trt=="ungrazed"]-chemi$lg_P[,2][chemi$trt=="ungrazed"], chemi$month[chemi$trt=="ungrazed"], chemi$lg_P[,1][chemi$trt=="ungrazed"]+chemi$lg_P[,2][chemi$trt=="ungrazed"],col="dodgerblue",lwd=2,length=0.05, angle=90, code=3)
 
 ##trtpd
-x1 <- all_subg$mo[all_subg$trt=="trtpd"]
-y1 <- all_subg$P_ppm[all_subg$trt=="trtpd"]
-mod <- lm(y1 ~ x1)
-summary(mod)
-## predict values across range
-newdat <- data.frame(x = seq(6,8, length = length(x1)))
-newdat <- within(newdat, ypred <- predict(mod, newdat))
-## add these predictions as a line to the plot
-lines(ypred ~ x1, data = newdat, col = "firebrick2", lwd = 2)
+cm <- lmer(lg_P ~ month + (1|site), data=tp)
+mo_e <- Effect("month", partial.residuals=T, cm)
+mo_e <- data.frame(mo_e)
+# add fill
+#polygon(c(rev(mo_e$month), mo_e$month), c(rev(mo_e$upper), mo_e$lower), col=t_col("firebrick2", perc = 70), border = NA)
 #points
-points(subg$P_ppm[,1][subg$trt=="trtpd"] ~ subg$month[subg$trt=="trtpd"],pch=24,col="firebrick2",bg="firebrick2",cex=2)
-#points(subg$P_ppm[,1][subg$trt=="trtpd"] ~ subg$month[subg$trt=="trtpd"],type="l",col="firebrick2",lwd=2)
-arrows(subg$month[subg$trt=="trtpd"], subg$P_ppm[,1][subg$trt=="trtpd"]-subg$P_ppm[,2][subg$trt=="trtpd"], subg$month[subg$trt=="trtpd"], subg$P_ppm[,1][subg$trt=="trtpd"]+subg$P_ppm[,2][subg$trt=="trtpd"],col="firebrick2",lwd=2,length=0.05, angle=90, code=3)
+points(chemi$lg_P[,1][chemi$trt=="trtpd"] ~ chemi$month[chemi$trt=="trtpd"],pch=24,col="firebrick2",bg="firebrick2",cex=2)
+#points(mo_e$fit ~ mo_e$month,type="l",col="firebrick2",lwd=2)
+arrows(chemi$month[chemi$trt=="trtpd"], chemi$lg_P[,1][chemi$trt=="trtpd"]-chemi$lg_P[,2][chemi$trt=="trtpd"], chemi$month[chemi$trt=="trtpd"], chemi$lg_P[,1][chemi$trt=="trtpd"]+chemi$lg_P[,2][chemi$trt=="trtpd"],col="firebrick2",lwd=2,length=0.05, angle=90, code=3)
 
 ##untrtpd
-x1 <- all_subg$mo[all_subg$trt=="untrtpd"]
-y1 <- all_subg$P_ppm[all_subg$trt=="untrtpd"]
-mod <- lm(y1 ~ x1)
-summary(mod)
-## predict values across range
-newdat <- data.frame(x = seq(6,8, length = length(x1)))
-newdat <- within(newdat, ypred <- predict(mod, newdat))
-## add these predictions as a line to the plot
-lines(ypred ~ x1, data = newdat, col = "goldenrod2", lwd = 2, lty = 2)
+cm <- lmer(lg_P ~ month + (1|site), data=pd)
+mo_e <- Effect("month", partial.residuals=T, cm)
+mo_e <- data.frame(mo_e)
+# add fill
+polygon(c(rev(mo_e$month), mo_e$month), c(rev(mo_e$upper), mo_e$lower), col=t_col("goldenrod2", perc = 70), border = NA)
 #points
-points(subg$P_ppm[,1][subg$trt=="untrtpd"] ~ subg$month[subg$trt=="untrtpd"],pch=25,col="goldenrod2",bg="goldenrod2",cex=2)
-#points(subg$P_ppm[,1][subg$trt=="untrtpd"] ~ subg$month[subg$trt=="untrtpd"],type="l",col="goldenrod2",lwd=2)
-arrows(subg$month[subg$trt=="untrtpd"], subg$P_ppm[,1][subg$trt=="untrtpd"]-subg$P_ppm[,2][subg$trt=="untrtpd"], subg$month[subg$trt=="untrtpd"], subg$P_ppm[,1][subg$trt=="untrtpd"]+subg$P_ppm[,2][subg$trt=="untrtpd"],col="goldenrod2",lwd=2,length=0.05, angle=90, code=3)
+points(chemi$lg_P[,1][chemi$trt=="untrtpd"] ~ chemi$month[chemi$trt=="untrtpd"],pch=25,col="goldenrod2",bg="goldenrod2",cex=2)
+points(mo_e$fit ~ mo_e$month,type="l",col="goldenrod2",lwd=2)
+arrows(chemi$month[chemi$trt=="untrtpd"], chemi$lg_P[,1][chemi$trt=="untrtpd"]-chemi$lg_P[,2][chemi$trt=="untrtpd"], chemi$month[chemi$trt=="untrtpd"], chemi$lg_P[,1][chemi$trt=="untrtpd"]+chemi$lg_P[,2][chemi$trt=="untrtpd"],col="goldenrod2",lwd=2,length=0.05, angle=90, code=3)
+
 legend("topright", legend=("B"), bty="n", cex=1.5)
 
 ############################################################################
 ##grass K
-plot(1, type="n", xlim=c(5.5,9.5), ylim=c(4500,27000),las=1,ylab="",xlab="", xaxt='n')
+nut <- na.omit(est$lg_K)
+min(nut)
+max(nut)
+plot(1, type="n", xlim=c(5.9,9.1), ylim=c(3.5,4.6), ylab="",xlab="", xaxt='n', yaxt='n')
+axis(2, at=c(log10(5000),log10(10000),log10(15000),log10(20000),log10(25000)), labels=c(5000,10000,15000,20000,25000),las=1)
 axis(1, at=c(6,7,8,9),cex.axis=1,labels=c("Jun","Jul","Aug","Sept"))
 box(lwd=2)
-title(ylab="Grass ppm K", line=3.5, cex.lab=1.6)
+title(ylab="Grass ppm K", line=3, cex.lab=1.6)
+
 ##bison
-x1 <- all_subg$mo[all_subg$trt=="bison"]
-y1 <- all_subg$K_ppm[all_subg$trt=="bison"]
-mod <- lm(y1 ~ x1)
-summary(mod)
-## predict values across range
-newdat <- data.frame(x = seq(6,9, length = length(x1)))
-newdat <- within(newdat, ypred <- predict(mod, newdat))
-## add these predictions as a line to the plot
-lines(ypred ~ x1, data = newdat, col = "sienna", lwd = 2, lty = 2)
+cm <- lmer(lg_K ~ month + (1|site), data=b)
+mo_e <- Effect("month", partial.residuals=T, cm)
+mo_e <- data.frame(mo_e)
+# add fill
+polygon(c(rev(mo_e$month), mo_e$month), c(rev(mo_e$upper), mo_e$lower), col=t_col("sienna", perc = 70), border = NA)
 #points
-points(subg$K_ppm[,1][subg$trt=="bison"] ~ subg$month[subg$trt=="bison"],pch=21,col="sienna",bg="sienna",cex=2)
-#points(subg$K_ppm[,1][subg$trt=="bison"] ~ subg$month[subg$trt=="bison"],type="l",col="sienna",lwd=2)
-arrows(subg$month[subg$trt=="bison"], subg$K_ppm[,1][subg$trt=="bison"]-subg$K_ppm[,2][subg$trt=="bison"], subg$month[subg$trt=="bison"], subg$K_ppm[,1][subg$trt=="bison"]+subg$K_ppm[,2][subg$trt=="bison"],col="sienna",lwd=2,length=0.05, angle=90, code=3)
+points(chemi$lg_K[,1][chemi$trt=="bison"] ~ chemi$month[chemi$trt=="bison"],pch=21,col="sienna",bg="sienna",cex=2)
+points(mo_e$fit ~ mo_e$month,type="l",col="sienna",lwd=2)
+arrows(chemi$month[chemi$trt=="bison"], chemi$lg_K[,1][chemi$trt=="bison"]-chemi$lg_K[,2][chemi$trt=="bison"], chemi$month[chemi$trt=="bison"], chemi$lg_K[,1][chemi$trt=="bison"]+chemi$lg_K[,2][chemi$trt=="bison"],col="sienna",lwd=2,length=0.05, angle=90, code=3)
 
 ##cattle
-x1 <- all_subg$mo[all_subg$trt=="cattle"]
-y1 <- all_subg$K_ppm[all_subg$trt=="cattle"]
-mod <- lm(y1 ~ x1)
-summary(mod)
-## predict values across range
-newdat <- data.frame(x = seq(6,9, length = length(x1)))
-newdat <- within(newdat, ypred <- predict(mod, newdat))
-## add these predictions as a line to the plot
-lines(ypred ~ x1, data = newdat, col = "gray0", lwd = 2, lty = 2)
+cm <- lmer(lg_K ~ month + (1|site), data=ca)
+mo_e <- Effect("month", partial.residuals=T, cm)
+mo_e <- data.frame(mo_e)
+# add fill
+polygon(c(rev(mo_e$month), mo_e$month), c(rev(mo_e$upper), mo_e$lower), col=t_col("gray0", perc = 70), border = NA)
 #points
-points(subg$K_ppm[,1][subg$trt=="cattle"] ~ subg$month[subg$trt=="cattle"],pch=22,col="gray0",bg="gray0",cex=2)
-#points(subg$K_ppm[,1][subg$trt=="cattle"] ~ subg$month[subg$trt=="cattle"],type="l",col="gray0",lwd=2)
-arrows(subg$month[subg$trt=="cattle"], subg$K_ppm[,1][subg$trt=="cattle"]-subg$K_ppm[,2][subg$trt=="cattle"], subg$month[subg$trt=="cattle"], subg$K_ppm[,1][subg$trt=="cattle"]+subg$K_ppm[,2][subg$trt=="cattle"],col="gray0",lwd=2,length=0.05, angle=90, code=3)
+points(chemi$lg_K[,1][chemi$trt=="cattle"] ~ chemi$month[chemi$trt=="cattle"],pch=22,col="gray0",bg="gray0",cex=2)
+points(mo_e$fit ~ mo_e$month,type="l",col="gray0",lwd=2)
+arrows(chemi$month[chemi$trt=="cattle"], chemi$lg_K[,1][chemi$trt=="cattle"]-chemi$lg_K[,2][chemi$trt=="cattle"], chemi$month[chemi$trt=="cattle"], chemi$lg_K[,1][chemi$trt=="cattle"]+chemi$lg_K[,2][chemi$trt=="cattle"],col="gray0",lwd=2,length=0.05, angle=90, code=3)
 
 ##ungrazed
-x1 <- all_subg$mo[all_subg$trt=="ungrazed"]
-y1 <- all_subg$K_ppm[all_subg$trt=="ungrazed"]
-mod <- lm(y1 ~ x1)
-summary(mod)
-## predict values across range
-newdat <- data.frame(x = seq(6,9, length = length(x1)))
-newdat <- within(newdat, ypred <- predict(mod, newdat))
-## add these predictions as a line to the plot
-lines(ypred ~ x1, data = newdat, col = "dodgerblue", lwd = 2, lty = 2)
+cm <- lmer(lg_K ~ month + (1|site), data=un)
+mo_e <- Effect("month", partial.residuals=T, cm)
+mo_e <- data.frame(mo_e)
+# add fill
+polygon(c(rev(mo_e$month), mo_e$month), c(rev(mo_e$upper), mo_e$lower), col=t_col("dodgerblue", perc = 70), border = NA)
 #points
-points(subg$K_ppm[,1][subg$trt=="ungrazed"] ~ subg$month[subg$trt=="ungrazed"],pch=23,col="dodgerblue",bg="dodgerblue",cex=2)
-#points(subg$K_ppm[,1][subg$trt=="ungrazed"] ~ subg$month[subg$trt=="ungrazed"],type="l",col="dodgerblue",lwd=2)
-arrows(subg$month[subg$trt=="ungrazed"], subg$K_ppm[,1][subg$trt=="ungrazed"]-subg$K_ppm[,2][subg$trt=="ungrazed"], subg$month[subg$trt=="ungrazed"], subg$K_ppm[,1][subg$trt=="ungrazed"]+subg$K_ppm[,2][subg$trt=="ungrazed"],col="dodgerblue",lwd=2,length=0.05, angle=90, code=3)
+points(chemi$lg_K[,1][chemi$trt=="ungrazed"] ~ chemi$month[chemi$trt=="ungrazed"],pch=23,col="dodgerblue",bg="dodgerblue",cex=2)
+points(mo_e$fit ~ mo_e$month,type="l",col="dodgerblue",lwd=2)
+arrows(chemi$month[chemi$trt=="ungrazed"], chemi$lg_K[,1][chemi$trt=="ungrazed"]-chemi$lg_K[,2][chemi$trt=="ungrazed"], chemi$month[chemi$trt=="ungrazed"], chemi$lg_K[,1][chemi$trt=="ungrazed"]+chemi$lg_K[,2][chemi$trt=="ungrazed"],col="dodgerblue",lwd=2,length=0.05, angle=90, code=3)
 
 ##trtpd
-x1 <- all_subg$mo[all_subg$trt=="trtpd"]
-y1 <- all_subg$K_ppm[all_subg$trt=="trtpd"]
-mod <- lm(y1 ~ x1)
-summary(mod)
-## predict values across range
-newdat <- data.frame(x = seq(6,8, length = length(x1)))
-newdat <- within(newdat, ypred <- predict(mod, newdat))
-## add these predictions as a line to the plot
-lines(ypred ~ x1, data = newdat, col = "firebrick2", lwd = 2)
+cm <- lmer(lg_K ~ month + (1|site), data=tp)
+mo_e <- Effect("month", partial.residuals=T, cm)
+mo_e <- data.frame(mo_e)
+# add fill
+#polygon(c(rev(mo_e$month), mo_e$month), c(rev(mo_e$upper), mo_e$lower), col=t_col("firebrick2", perc = 70), border = NA)
 #points
-points(subg$K_ppm[,1][subg$trt=="trtpd"] ~ subg$month[subg$trt=="trtpd"],pch=24,col="firebrick2",bg="firebrick2",cex=2)
-#points(subg$K_ppm[,1][subg$trt=="trtpd"] ~ subg$month[subg$trt=="trtpd"],type="l",col="firebrick2",lwd=2)
-arrows(subg$month[subg$trt=="trtpd"], subg$K_ppm[,1][subg$trt=="trtpd"]-subg$K_ppm[,2][subg$trt=="trtpd"], subg$month[subg$trt=="trtpd"], subg$K_ppm[,1][subg$trt=="trtpd"]+subg$K_ppm[,2][subg$trt=="trtpd"],col="firebrick2",lwd=2,length=0.05, angle=90, code=3)
+points(chemi$lg_K[,1][chemi$trt=="trtpd"] ~ chemi$month[chemi$trt=="trtpd"],pch=24,col="firebrick2",bg="firebrick2",cex=2)
+#points(mo_e$fit ~ mo_e$month,type="l",col="firebrick2",lwd=2)
+arrows(chemi$month[chemi$trt=="trtpd"], chemi$lg_K[,1][chemi$trt=="trtpd"]-chemi$lg_K[,2][chemi$trt=="trtpd"], chemi$month[chemi$trt=="trtpd"], chemi$lg_K[,1][chemi$trt=="trtpd"]+chemi$lg_K[,2][chemi$trt=="trtpd"],col="firebrick2",lwd=2,length=0.05, angle=90, code=3)
 
 ##untrtpd
-x1 <- all_subg$mo[all_subg$trt=="untrtpd"]
-y1 <- all_subg$K_ppm[all_subg$trt=="untrtpd"]
-mod <- lm(y1 ~ x1)
-summary(mod)
-## predict values across range
-newdat <- data.frame(x = seq(6,8, length = length(x1)))
-newdat <- within(newdat, ypred <- predict(mod, newdat))
-## add these predictions as a line to the plot
-lines(ypred ~ x1, data = newdat, col = "goldenrod2", lwd = 2, lty = 2)
+cm <- lmer(lg_K ~ month + (1|site), data=pd)
+mo_e <- Effect("month", partial.residuals=T, cm)
+mo_e <- data.frame(mo_e)
+# add fill
+polygon(c(rev(mo_e$month), mo_e$month), c(rev(mo_e$upper), mo_e$lower), col=t_col("goldenrod2", perc = 70), border = NA)
 #points
-points(subg$K_ppm[,1][subg$trt=="untrtpd"] ~ subg$month[subg$trt=="untrtpd"],pch=25,col="goldenrod2",bg="goldenrod2",cex=2)
-#points(subg$K_ppm[,1][subg$trt=="untrtpd"] ~ subg$month[subg$trt=="untrtpd"],type="l",col="goldenrod2",lwd=2)
-arrows(subg$month[subg$trt=="untrtpd"], subg$K_ppm[,1][subg$trt=="untrtpd"]-subg$K_ppm[,2][subg$trt=="untrtpd"], subg$month[subg$trt=="untrtpd"], subg$K_ppm[,1][subg$trt=="untrtpd"]+subg$K_ppm[,2][subg$trt=="untrtpd"],col="goldenrod2",lwd=2,length=0.05, angle=90, code=3)
+points(chemi$lg_K[,1][chemi$trt=="untrtpd"] ~ chemi$month[chemi$trt=="untrtpd"],pch=25,col="goldenrod2",bg="goldenrod2",cex=2)
+points(mo_e$fit ~ mo_e$month,type="l",col="goldenrod2",lwd=2)
+arrows(chemi$month[chemi$trt=="untrtpd"], chemi$lg_K[,1][chemi$trt=="untrtpd"]-chemi$lg_K[,2][chemi$trt=="untrtpd"], chemi$month[chemi$trt=="untrtpd"], chemi$lg_K[,1][chemi$trt=="untrtpd"]+chemi$lg_K[,2][chemi$trt=="untrtpd"],col="goldenrod2",lwd=2,length=0.05, angle=90, code=3)
+
 legend("topright", legend=("C"), bty="n", cex=1.5)
 
 #######################################################
 
 ##grass Mg
-plot(1, type="n", xlim=c(5.5,9.5), ylim=c(400,2500),las=1,ylab="",xlab="", xaxt='n')
+nut <- na.omit(est$lg_Mg)
+min(nut)
+max(nut)
+plot(1, type="n", xlim=c(5.9,9.1), ylim=c(2.7,3.5), ylab="",xlab="", xaxt='n', yaxt='n')
+axis(2, at=c(log10(500),log10(1000),log10(1500),log10(2000),log10(2500)), labels=c(500,1000,1500,2000,2500),las=1)
 axis(1, at=c(6,7,8,9),cex.axis=1,labels=c("Jun","Jul","Aug","Sept"))
 box(lwd=2)
-title(ylab="Grass ppm Mg", line=3.5, cex.lab=1.6)
+title(ylab="Grass ppm Mg", line=3, cex.lab=1.6)
+
 ##bison
-x1 <- all_subg$mo[all_subg$trt=="bison"]
-y1 <- all_subg$Mg_ppm[all_subg$trt=="bison"]
-mod <- lm(y1 ~ x1)
-summary(mod)
-## predict values across range
-newdat <- data.frame(x = seq(6,9, length = length(x1)))
-newdat <- within(newdat, ypred <- predict(mod, newdat))
-## add these predictions as a line to the plot
-lines(ypred ~ x1, data = newdat, col = "sienna", lwd = 2, lty = 2)
+cm <- lmer(lg_Mg ~ month + (1|site), data=b)
+mo_e <- Effect("month", partial.residuals=T, cm)
+mo_e <- data.frame(mo_e)
+# add fill
+polygon(c(rev(mo_e$month), mo_e$month), c(rev(mo_e$upper), mo_e$lower), col=t_col("sienna", perc = 70), border = NA)
 #points
-points(subg$Mg_ppm[,1][subg$trt=="bison"] ~ subg$month[subg$trt=="bison"],pch=21,col="sienna",bg="sienna",cex=2)
-#points(subg$Mg_ppm[,1][subg$trt=="bison"] ~ subg$month[subg$trt=="bison"],type="l",col="sienna",lwd=2)
-arrows(subg$month[subg$trt=="bison"], subg$Mg_ppm[,1][subg$trt=="bison"]-subg$Mg_ppm[,2][subg$trt=="bison"], subg$month[subg$trt=="bison"], subg$Mg_ppm[,1][subg$trt=="bison"]+subg$Mg_ppm[,2][subg$trt=="bison"],col="sienna",lwd=2,length=0.05, angle=90, code=3)
+points(chemi$lg_Mg[,1][chemi$trt=="bison"] ~ chemi$month[chemi$trt=="bison"],pch=21,col="sienna",bg="sienna",cex=2)
+points(mo_e$fit ~ mo_e$month,type="l",col="sienna",lwd=2)
+arrows(chemi$month[chemi$trt=="bison"], chemi$lg_Mg[,1][chemi$trt=="bison"]-chemi$lg_Mg[,2][chemi$trt=="bison"], chemi$month[chemi$trt=="bison"], chemi$lg_Mg[,1][chemi$trt=="bison"]+chemi$lg_Mg[,2][chemi$trt=="bison"],col="sienna",lwd=2,length=0.05, angle=90, code=3)
 
 ##cattle
-x1 <- all_subg$mo[all_subg$trt=="cattle"]
-y1 <- all_subg$Mg_ppm[all_subg$trt=="cattle"]
-mod <- lm(y1 ~ x1)
-summary(mod)
-## predict values across range
-newdat <- data.frame(x = seq(6,9, length = length(x1)))
-newdat <- within(newdat, ypred <- predict(mod, newdat))
-## add these predictions as a line to the plot
-lines(ypred ~ x1, data = newdat, col = "gray0", lwd = 2, lty = 2)
+cm <- lmer(lg_Mg ~ month + (1|site), data=ca)
+mo_e <- Effect("month", partial.residuals=T, cm)
+mo_e <- data.frame(mo_e)
+# add fill
+polygon(c(rev(mo_e$month), mo_e$month), c(rev(mo_e$upper), mo_e$lower), col=t_col("gray0", perc = 70), border = NA)
 #points
-points(subg$Mg_ppm[,1][subg$trt=="cattle"] ~ subg$month[subg$trt=="cattle"],pch=22,col="gray0",bg="gray0",cex=2)
-#points(subg$Mg_ppm[,1][subg$trt=="cattle"] ~ subg$month[subg$trt=="cattle"],type="l",col="gray0",lwd=2)
-arrows(subg$month[subg$trt=="cattle"], subg$Mg_ppm[,1][subg$trt=="cattle"]-subg$Mg_ppm[,2][subg$trt=="cattle"], subg$month[subg$trt=="cattle"], subg$Mg_ppm[,1][subg$trt=="cattle"]+subg$Mg_ppm[,2][subg$trt=="cattle"],col="gray0",lwd=2,length=0.05, angle=90, code=3)
+points(chemi$lg_Mg[,1][chemi$trt=="cattle"] ~ chemi$month[chemi$trt=="cattle"],pch=22,col="gray0",bg="gray0",cex=2)
+points(mo_e$fit ~ mo_e$month,type="l",col="gray0",lwd=2)
+arrows(chemi$month[chemi$trt=="cattle"], chemi$lg_Mg[,1][chemi$trt=="cattle"]-chemi$lg_Mg[,2][chemi$trt=="cattle"], chemi$month[chemi$trt=="cattle"], chemi$lg_Mg[,1][chemi$trt=="cattle"]+chemi$lg_Mg[,2][chemi$trt=="cattle"],col="gray0",lwd=2,length=0.05, angle=90, code=3)
 
 ##ungrazed
-x1 <- all_subg$mo[all_subg$trt=="ungrazed"]
-y1 <- all_subg$Mg_ppm[all_subg$trt=="ungrazed"]
-mod <- lm(y1 ~ x1)
-summary(mod)
-## predict values across range
-newdat <- data.frame(x = seq(6,9, length = length(x1)))
-newdat <- within(newdat, ypred <- predict(mod, newdat))
-## add these predictions as a line to the plot
-lines(ypred ~ x1, data = newdat, col = "dodgerblue", lwd = 2, lty = 2)
+cm <- lmer(lg_Mg ~ month + (1|site), data=un)
+mo_e <- Effect("month", partial.residuals=T, cm)
+mo_e <- data.frame(mo_e)
+# add fill
+polygon(c(rev(mo_e$month), mo_e$month), c(rev(mo_e$upper), mo_e$lower), col=t_col("dodgerblue", perc = 70), border = NA)
 #points
-points(subg$Mg_ppm[,1][subg$trt=="ungrazed"] ~ subg$month[subg$trt=="ungrazed"],pch=23,col="dodgerblue",bg="dodgerblue",cex=2)
-#points(subg$Mg_ppm[,1][subg$trt=="ungrazed"] ~ subg$month[subg$trt=="ungrazed"],type="l",col="dodgerblue",lwd=2)
-arrows(subg$month[subg$trt=="ungrazed"], subg$Mg_ppm[,1][subg$trt=="ungrazed"]-subg$Mg_ppm[,2][subg$trt=="ungrazed"], subg$month[subg$trt=="ungrazed"], subg$Mg_ppm[,1][subg$trt=="ungrazed"]+subg$Mg_ppm[,2][subg$trt=="ungrazed"],col="dodgerblue",lwd=2,length=0.05, angle=90, code=3)
+points(chemi$lg_Mg[,1][chemi$trt=="ungrazed"] ~ chemi$month[chemi$trt=="ungrazed"],pch=23,col="dodgerblue",bg="dodgerblue",cex=2)
+points(mo_e$fit ~ mo_e$month,type="l",col="dodgerblue",lwd=2)
+arrows(chemi$month[chemi$trt=="ungrazed"], chemi$lg_Mg[,1][chemi$trt=="ungrazed"]-chemi$lg_Mg[,2][chemi$trt=="ungrazed"], chemi$month[chemi$trt=="ungrazed"], chemi$lg_Mg[,1][chemi$trt=="ungrazed"]+chemi$lg_Mg[,2][chemi$trt=="ungrazed"],col="dodgerblue",lwd=2,length=0.05, angle=90, code=3)
 
 ##trtpd
-x1 <- all_subg$mo[all_subg$trt=="trtpd"]
-y1 <- all_subg$Mg_ppm[all_subg$trt=="trtpd"]
-mod <- lm(y1 ~ x1)
-summary(mod)
-## predict values across range
-newdat <- data.frame(x = seq(6,8, length = length(x1)))
-newdat <- within(newdat, ypred <- predict(mod, newdat))
-## add these predictions as a line to the plot
-lines(ypred ~ x1, data = newdat, col = "firebrick2", lwd = 2)
+cm <- lmer(lg_Mg ~ month + (1|site), data=tp)
+mo_e <- Effect("month", partial.residuals=T, cm)
+mo_e <- data.frame(mo_e)
+# add fill
+#polygon(c(rev(mo_e$month), mo_e$month), c(rev(mo_e$upper), mo_e$lower), col=t_col("firebrick2", perc = 70), border = NA)
 #points
-points(subg$Mg_ppm[,1][subg$trt=="trtpd"] ~ subg$month[subg$trt=="trtpd"],pch=24,col="firebrick2",bg="firebrick2",cex=2)
-#points(subg$Mg_ppm[,1][subg$trt=="trtpd"] ~ subg$month[subg$trt=="trtpd"],type="l",col="firebrick2",lwd=2)
-arrows(subg$month[subg$trt=="trtpd"], subg$Mg_ppm[,1][subg$trt=="trtpd"]-subg$Mg_ppm[,2][subg$trt=="trtpd"], subg$month[subg$trt=="trtpd"], subg$Mg_ppm[,1][subg$trt=="trtpd"]+subg$Mg_ppm[,2][subg$trt=="trtpd"],col="firebrick2",lwd=2,length=0.05, angle=90, code=3)
+points(chemi$lg_Mg[,1][chemi$trt=="trtpd"] ~ chemi$month[chemi$trt=="trtpd"],pch=24,col="firebrick2",bg="firebrick2",cex=2)
+#points(mo_e$fit ~ mo_e$month,type="l",col="firebrick2",lwd=2)
+arrows(chemi$month[chemi$trt=="trtpd"], chemi$lg_Mg[,1][chemi$trt=="trtpd"]-chemi$lg_Mg[,2][chemi$trt=="trtpd"], chemi$month[chemi$trt=="trtpd"], chemi$lg_Mg[,1][chemi$trt=="trtpd"]+chemi$lg_Mg[,2][chemi$trt=="trtpd"],col="firebrick2",lwd=2,length=0.05, angle=90, code=3)
 
 ##untrtpd
-x1 <- all_subg$mo[all_subg$trt=="untrtpd"]
-y1 <- all_subg$Mg_ppm[all_subg$trt=="untrtpd"]
-mod <- lm(y1 ~ x1)
-summary(mod)
-## predict values across range
-newdat <- data.frame(x = seq(6,8, length = length(x1)))
-newdat <- within(newdat, ypred <- predict(mod, newdat))
-## add these predictions as a line to the plot
-lines(ypred ~ x1, data = newdat, col = "goldenrod2", lwd = 2, lty = 2)
+cm <- lmer(lg_Mg ~ month + (1|site), data=pd)
+mo_e <- Effect("month", partial.residuals=T, cm)
+mo_e <- data.frame(mo_e)
+# add fill
+polygon(c(rev(mo_e$month), mo_e$month), c(rev(mo_e$upper), mo_e$lower), col=t_col("goldenrod2", perc = 70), border = NA)
 #points
-points(subg$Mg_ppm[,1][subg$trt=="untrtpd"] ~ subg$month[subg$trt=="untrtpd"],pch=25,col="goldenrod2",bg="goldenrod2",cex=2)
-#points(subg$Mg_ppm[,1][subg$trt=="untrtpd"] ~ subg$month[subg$trt=="untrtpd"],type="l",col="goldenrod2",lwd=2)
-arrows(subg$month[subg$trt=="untrtpd"], subg$Mg_ppm[,1][subg$trt=="untrtpd"]-subg$Mg_ppm[,2][subg$trt=="untrtpd"], subg$month[subg$trt=="untrtpd"], subg$Mg_ppm[,1][subg$trt=="untrtpd"]+subg$Mg_ppm[,2][subg$trt=="untrtpd"],col="goldenrod2",lwd=2,length=0.05, angle=90, code=3)
+points(chemi$lg_Mg[,1][chemi$trt=="untrtpd"] ~ chemi$month[chemi$trt=="untrtpd"],pch=25,col="goldenrod2",bg="goldenrod2",cex=2)
+points(mo_e$fit ~ mo_e$month,type="l",col="goldenrod2",lwd=2)
+arrows(chemi$month[chemi$trt=="untrtpd"], chemi$lg_Mg[,1][chemi$trt=="untrtpd"]-chemi$lg_Mg[,2][chemi$trt=="untrtpd"], chemi$month[chemi$trt=="untrtpd"], chemi$lg_Mg[,1][chemi$trt=="untrtpd"]+chemi$lg_Mg[,2][chemi$trt=="untrtpd"],col="goldenrod2",lwd=2,length=0.05, angle=90, code=3)
+
 legend("topright", legend=("D"), bty="n", cex=1.5)
 
 ##########################################################################
 ##grass Na
-plot(1, type="n", xlim=c(5.5,9.5), ylim=c(1220,2050),las=1,ylab="",xlab="", xaxt='n')
+nut <- na.omit(est$lg_Na)
+min(nut)
+max(nut)
+plot(1, type="n", xlim=c(5.9,9.1), ylim=c(3,3.3), ylab="",xlab="", xaxt='n', yaxt='n')
+axis(2, at=c(log10(1200),log10(1400),log10(1600),log10(1800),log10(2000)), labels=c(1200,1400,1600,1800,2000),las=1)
 axis(1, at=c(6,7,8,9),cex.axis=1,labels=c("Jun","Jul","Aug","Sept"))
 box(lwd=2)
-title(ylab="Grass ppm Na", line=3.5, cex.lab=1.6)
+title(ylab="Grass ppm Na", line=3, cex.lab=1.6)
 ##bison
-x1 <- all_subg$mo[all_subg$trt=="bison"]
-y1 <- all_subg$Na_ppm[all_subg$trt=="bison"]
-mod <- lm(y1 ~ x1)
-summary(mod)
-## predict values across range
-newdat <- data.frame(x = seq(6,9, length = length(x1)))
-newdat <- within(newdat, ypred <- predict(mod, newdat))
-## add these predictions as a line to the plot
-lines(ypred ~ x1, data = newdat, col = "sienna", lwd = 2, lty = 2)
+cm <- lmer(lg_Na ~ month + (1|site), data=b)
+mo_e <- Effect("month", partial.residuals=T, cm)
+mo_e <- data.frame(mo_e)
+# add fill
+polygon(c(rev(mo_e$month), mo_e$month), c(rev(mo_e$upper), mo_e$lower), col=t_col("sienna", perc = 70), border = NA)
 #points
-points(subg$Na_ppm[,1][subg$trt=="bison"] ~ subg$month[subg$trt=="bison"],pch=21,col="sienna",bg="sienna",cex=2)
-#points(subg$Na_ppm[,1][subg$trt=="bison"] ~ subg$month[subg$trt=="bison"],type="l",col="sienna",lwd=2)
-arrows(subg$month[subg$trt=="bison"], subg$Na_ppm[,1][subg$trt=="bison"]-subg$Na_ppm[,2][subg$trt=="bison"], subg$month[subg$trt=="bison"], subg$Na_ppm[,1][subg$trt=="bison"]+subg$Na_ppm[,2][subg$trt=="bison"],col="sienna",lwd=2,length=0.05, angle=90, code=3)
+points(chemi$lg_Na[,1][chemi$trt=="bison"] ~ chemi$month[chemi$trt=="bison"],pch=21,col="sienna",bg="sienna",cex=2)
+points(mo_e$fit ~ mo_e$month,type="l",col="sienna",lwd=2)
+arrows(chemi$month[chemi$trt=="bison"], chemi$lg_Na[,1][chemi$trt=="bison"]-chemi$lg_Na[,2][chemi$trt=="bison"], chemi$month[chemi$trt=="bison"], chemi$lg_Na[,1][chemi$trt=="bison"]+chemi$lg_Na[,2][chemi$trt=="bison"],col="sienna",lwd=2,length=0.05, angle=90, code=3)
 
 ##cattle
-x1 <- all_subg$mo[all_subg$trt=="cattle"]
-y1 <- all_subg$Na_ppm[all_subg$trt=="cattle"]
-mod <- lm(y1 ~ x1)
-summary(mod)
-## predict values across range
-newdat <- data.frame(x = seq(6,9, length = length(x1)))
-newdat <- within(newdat, ypred <- predict(mod, newdat))
-## add these predictions as a line to the plot
-lines(ypred ~ x1, data = newdat, col = "gray0", lwd = 2, lty = 2)
+cm <- lmer(lg_Na ~ month + (1|site), data=ca)
+mo_e <- Effect("month", partial.residuals=T, cm)
+mo_e <- data.frame(mo_e)
+# add fill
+polygon(c(rev(mo_e$month), mo_e$month), c(rev(mo_e$upper), mo_e$lower), col=t_col("gray0", perc = 70), border = NA)
 #points
-points(subg$Na_ppm[,1][subg$trt=="cattle"] ~ subg$month[subg$trt=="cattle"],pch=22,col="gray0",bg="gray0",cex=2)
-#points(subg$Na_ppm[,1][subg$trt=="cattle"] ~ subg$month[subg$trt=="cattle"],type="l",col="gray0",lwd=2)
-arrows(subg$month[subg$trt=="cattle"], subg$Na_ppm[,1][subg$trt=="cattle"]-subg$Na_ppm[,2][subg$trt=="cattle"], subg$month[subg$trt=="cattle"], subg$Na_ppm[,1][subg$trt=="cattle"]+subg$Na_ppm[,2][subg$trt=="cattle"],col="gray0",lwd=2,length=0.05, angle=90, code=3)
+points(chemi$lg_Na[,1][chemi$trt=="cattle"] ~ chemi$month[chemi$trt=="cattle"],pch=22,col="gray0",bg="gray0",cex=2)
+points(mo_e$fit ~ mo_e$month,type="l",col="gray0",lwd=2)
+arrows(chemi$month[chemi$trt=="cattle"], chemi$lg_Na[,1][chemi$trt=="cattle"]-chemi$lg_Na[,2][chemi$trt=="cattle"], chemi$month[chemi$trt=="cattle"], chemi$lg_Na[,1][chemi$trt=="cattle"]+chemi$lg_Na[,2][chemi$trt=="cattle"],col="gray0",lwd=2,length=0.05, angle=90, code=3)
 
 ##ungrazed
-x1 <- all_subg$mo[all_subg$trt=="ungrazed"]
-y1 <- all_subg$Na_ppm[all_subg$trt=="ungrazed"]
-mod <- lm(y1 ~ x1)
-summary(mod)
-## predict values across range
-newdat <- data.frame(x = seq(6,9, length = length(x1)))
-newdat <- within(newdat, ypred <- predict(mod, newdat))
-## add these predictions as a line to the plot
-lines(ypred ~ x1, data = newdat, col = "dodgerblue", lwd = 2, lty = 2)
+cm <- lmer(lg_Na ~ month + (1|site), data=un)
+mo_e <- Effect("month", partial.residuals=T, cm)
+mo_e <- data.frame(mo_e)
+# add fill
+polygon(c(rev(mo_e$month), mo_e$month), c(rev(mo_e$upper), mo_e$lower), col=t_col("dodgerblue", perc = 70), border = NA)
 #points
-points(subg$Na_ppm[,1][subg$trt=="ungrazed"] ~ subg$month[subg$trt=="ungrazed"],pch=23,col="dodgerblue",bg="dodgerblue",cex=2)
-#points(subg$Na_ppm[,1][subg$trt=="ungrazed"] ~ subg$month[subg$trt=="ungrazed"],type="l",col="dodgerblue",lwd=2)
-arrows(subg$month[subg$trt=="ungrazed"], subg$Na_ppm[,1][subg$trt=="ungrazed"]-subg$Na_ppm[,2][subg$trt=="ungrazed"], subg$month[subg$trt=="ungrazed"], subg$Na_ppm[,1][subg$trt=="ungrazed"]+subg$Na_ppm[,2][subg$trt=="ungrazed"],col="dodgerblue",lwd=2,length=0.05, angle=90, code=3)
+points(chemi$lg_Na[,1][chemi$trt=="ungrazed"] ~ chemi$month[chemi$trt=="ungrazed"],pch=23,col="dodgerblue",bg="dodgerblue",cex=2)
+points(mo_e$fit ~ mo_e$month,type="l",col="dodgerblue",lwd=2)
+arrows(chemi$month[chemi$trt=="ungrazed"], chemi$lg_Na[,1][chemi$trt=="ungrazed"]-chemi$lg_Na[,2][chemi$trt=="ungrazed"], chemi$month[chemi$trt=="ungrazed"], chemi$lg_Na[,1][chemi$trt=="ungrazed"]+chemi$lg_Na[,2][chemi$trt=="ungrazed"],col="dodgerblue",lwd=2,length=0.05, angle=90, code=3)
 
 ##trtpd
-x1 <- all_subg$mo[all_subg$trt=="trtpd"]
-y1 <- all_subg$Na_ppm[all_subg$trt=="trtpd"]
-mod <- lm(y1 ~ x1)
-summary(mod)
-## predict values across range
-newdat <- data.frame(x = seq(6,8, length = length(x1)))
-newdat <- within(newdat, ypred <- predict(mod, newdat))
-## add these predictions as a line to the plot
-lines(ypred ~ x1, data = newdat, col = "firebrick2", lwd = 2)
+cm <- lmer(lg_Na ~ month + (1|site), data=tp)
+mo_e <- Effect("month", partial.residuals=T, cm)
+mo_e <- data.frame(mo_e)
+# add fill
+#polygon(c(rev(mo_e$month), mo_e$month), c(rev(mo_e$upper), mo_e$lower), col=t_col("firebrick2", perc = 70), border = NA)
 #points
-points(subg$Na_ppm[,1][subg$trt=="trtpd"] ~ subg$month[subg$trt=="trtpd"],pch=24,col="firebrick2",bg="firebrick2",cex=2)
-#points(subg$Na_ppm[,1][subg$trt=="trtpd"] ~ subg$month[subg$trt=="trtpd"],type="l",col="firebrick2",lwd=2)
-arrows(subg$month[subg$trt=="trtpd"], subg$Na_ppm[,1][subg$trt=="trtpd"]-subg$Na_ppm[,2][subg$trt=="trtpd"], subg$month[subg$trt=="trtpd"], subg$Na_ppm[,1][subg$trt=="trtpd"]+subg$Na_ppm[,2][subg$trt=="trtpd"],col="firebrick2",lwd=2,length=0.05, angle=90, code=3)
+points(chemi$lg_Na[,1][chemi$trt=="trtpd"] ~ chemi$month[chemi$trt=="trtpd"],pch=24,col="firebrick2",bg="firebrick2",cex=2)
+#points(mo_e$fit ~ mo_e$month,type="l",col="firebrick2",lwd=2)
+arrows(chemi$month[chemi$trt=="trtpd"], chemi$lg_Na[,1][chemi$trt=="trtpd"]-chemi$lg_Na[,2][chemi$trt=="trtpd"], chemi$month[chemi$trt=="trtpd"], chemi$lg_Na[,1][chemi$trt=="trtpd"]+chemi$lg_Na[,2][chemi$trt=="trtpd"],col="firebrick2",lwd=2,length=0.05, angle=90, code=3)
 
 ##untrtpd
-x1 <- all_subg$mo[all_subg$trt=="untrtpd"]
-y1 <- all_subg$Na_ppm[all_subg$trt=="untrtpd"]
-mod <- lm(y1 ~ x1)
-summary(mod)
-## predict values across range
-newdat <- data.frame(x = seq(6,8, length = length(x1)))
-newdat <- within(newdat, ypred <- predict(mod, newdat))
-## add these predictions as a line to the plot
-lines(ypred ~ x1, data = newdat, col = "goldenrod2", lwd = 2, lty = 2)
+cm <- lmer(lg_Na ~ month + (1|site), data=pd)
+mo_e <- Effect("month", partial.residuals=T, cm)
+mo_e <- data.frame(mo_e)
+# add fill
+polygon(c(rev(mo_e$month), mo_e$month), c(rev(mo_e$upper), mo_e$lower), col=t_col("goldenrod2", perc = 70), border = NA)
 #points
-points(subg$Na_ppm[,1][subg$trt=="untrtpd"] ~ subg$month[subg$trt=="untrtpd"],pch=25,col="goldenrod2",bg="goldenrod2",cex=2)
-#points(subg$Na_ppm[,1][subg$trt=="untrtpd"] ~ subg$month[subg$trt=="untrtpd"],type="l",col="goldenrod2",lwd=2)
-arrows(subg$month[subg$trt=="untrtpd"], subg$Na_ppm[,1][subg$trt=="untrtpd"]-subg$Na_ppm[,2][subg$trt=="untrtpd"], subg$month[subg$trt=="untrtpd"], subg$Na_ppm[,1][subg$trt=="untrtpd"]+subg$Na_ppm[,2][subg$trt=="untrtpd"],col="goldenrod2",lwd=2,length=0.05, angle=90, code=3)
+points(chemi$lg_Na[,1][chemi$trt=="untrtpd"] ~ chemi$month[chemi$trt=="untrtpd"],pch=25,col="goldenrod2",bg="goldenrod2",cex=2)
+points(mo_e$fit ~ mo_e$month,type="l",col="goldenrod2",lwd=2)
+arrows(chemi$month[chemi$trt=="untrtpd"], chemi$lg_Na[,1][chemi$trt=="untrtpd"]-chemi$lg_Na[,2][chemi$trt=="untrtpd"], chemi$month[chemi$trt=="untrtpd"], chemi$lg_Na[,1][chemi$trt=="untrtpd"]+chemi$lg_Na[,2][chemi$trt=="untrtpd"],col="goldenrod2",lwd=2,length=0.05, angle=90, code=3)
+
 legend("topright", legend=("E"), bty="n", cex=1.5)
 
 ##
@@ -445,84 +406,69 @@ legend("topleft",legend=c("Ungrazed","Bison","Cattle","Untrt PD","Trt PD"), bty=
 
 #############################################################
 ##grass Si
-plot(1, type="n", xlim=c(5.5,9.5), ylim=c(0,1300),las=1,ylab="",xlab="", xaxt='n')
+nut <- na.omit(est$lg_Si)
+min(nut)
+max(nut)
+plot(1, type="n", xlim=c(5.9,9.1), ylim=c(1.5,3.5), ylab="",xlab="", xaxt='n', yaxt='n')
+axis(2, at=c(log10(50),log10(100),log10(200),log10(500),log10(1000),log10(2000)), labels=c(50,100,200,500,1000,2000),las=1)
 axis(1, at=c(6,7,8,9),cex.axis=1,labels=c("Jun","Jul","Aug","Sept"))
 box(lwd=2)
-title(ylab="Grass ppm Si", line=3.5, cex.lab=1.6)
+title(ylab="Grass ppm Na", line=3, cex.lab=1.6)
 ##bison
-x1 <- all_subg$mo[all_subg$trt=="bison"]
-y1 <- all_subg$Si_ppm[all_subg$trt=="bison"]
-mod <- lm(y1 ~ x1)
-summary(mod)
-## predict values across range
-newdat <- data.frame(x = seq(6,9, length = length(x1)))
-newdat <- within(newdat, ypred <- predict(mod, newdat))
-## add these predictions as a line to the plot
-lines(ypred ~ x1, data = newdat, col = "sienna", lwd = 2)
+cm <- lmer(lg_Si ~ month + (1|site), data=b)
+mo_e <- Effect("month", partial.residuals=T, cm)
+mo_e <- data.frame(mo_e)
+# add fill
+polygon(c(rev(mo_e$month), mo_e$month), c(rev(mo_e$upper), mo_e$lower), col=t_col("sienna", perc = 70), border = NA)
 #points
-points(subg$Si_ppm[,1][subg$trt=="bison"] ~ subg$month[subg$trt=="bison"],pch=21,col="sienna",bg="sienna",cex=2)
-#points(subg$Si_ppm[,1][subg$trt=="bison"] ~ subg$month[subg$trt=="bison"],type="l",col="sienna",lwd=2)
-arrows(subg$month[subg$trt=="bison"], subg$Si_ppm[,1][subg$trt=="bison"]-subg$Si_ppm[,2][subg$trt=="bison"], subg$month[subg$trt=="bison"], subg$Si_ppm[,1][subg$trt=="bison"]+subg$Si_ppm[,2][subg$trt=="bison"],col="sienna",lwd=2,length=0.05, angle=90, code=3)
+points(chemi$lg_Si[,1][chemi$trt=="bison"] ~ chemi$month[chemi$trt=="bison"],pch=21,col="sienna",bg="sienna",cex=2)
+points(mo_e$fit ~ mo_e$month,type="l",col="sienna",lwd=2)
+arrows(chemi$month[chemi$trt=="bison"], chemi$lg_Si[,1][chemi$trt=="bison"]-chemi$lg_Si[,2][chemi$trt=="bison"], chemi$month[chemi$trt=="bison"], chemi$lg_Si[,1][chemi$trt=="bison"]+chemi$lg_Si[,2][chemi$trt=="bison"],col="sienna",lwd=2,length=0.05, angle=90, code=3)
 
 ##cattle
-x1 <- all_subg$mo[all_subg$trt=="cattle"]
-y1 <- all_subg$Si_ppm[all_subg$trt=="cattle"]
-mod <- lm(y1 ~ x1)
-summary(mod)
-## predict values across range
-newdat <- data.frame(x = seq(6,9, length = length(x1)))
-newdat <- within(newdat, ypred <- predict(mod, newdat))
-## add these predictions as a line to the plot
-lines(ypred ~ x1, data = newdat, col = "gray0", lwd = 2)
+cm <- lmer(lg_Si ~ month + (1|site), data=ca)
+mo_e <- Effect("month", partial.residuals=T, cm)
+mo_e <- data.frame(mo_e)
+# add fill
+polygon(c(rev(mo_e$month), mo_e$month), c(rev(mo_e$upper), mo_e$lower), col=t_col("gray0", perc = 70), border = NA)
 #points
-points(subg$Si_ppm[,1][subg$trt=="cattle"] ~ subg$month[subg$trt=="cattle"],pch=22,col="gray0",bg="gray0",cex=2)
-#points(subg$Si_ppm[,1][subg$trt=="cattle"] ~ subg$month[subg$trt=="cattle"],type="l",col="gray0",lwd=2)
-arrows(subg$month[subg$trt=="cattle"], subg$Si_ppm[,1][subg$trt=="cattle"]-subg$Si_ppm[,2][subg$trt=="cattle"], subg$month[subg$trt=="cattle"], subg$Si_ppm[,1][subg$trt=="cattle"]+subg$Si_ppm[,2][subg$trt=="cattle"],col="gray0",lwd=2,length=0.05, angle=90, code=3)
+points(chemi$lg_Si[,1][chemi$trt=="cattle"] ~ chemi$month[chemi$trt=="cattle"],pch=22,col="gray0",bg="gray0",cex=2)
+points(mo_e$fit ~ mo_e$month,type="l",col="gray0",lwd=2)
+arrows(chemi$month[chemi$trt=="cattle"], chemi$lg_Si[,1][chemi$trt=="cattle"]-chemi$lg_Si[,2][chemi$trt=="cattle"], chemi$month[chemi$trt=="cattle"], chemi$lg_Si[,1][chemi$trt=="cattle"]+chemi$lg_Si[,2][chemi$trt=="cattle"],col="gray0",lwd=2,length=0.05, angle=90, code=3)
 
 ##ungrazed
-x1 <- all_subg$mo[all_subg$trt=="ungrazed"]
-y1 <- all_subg$Si_ppm[all_subg$trt=="ungrazed"]
-mod <- lm(y1 ~ x1)
-summary(mod)
-## predict values across range
-newdat <- data.frame(x = seq(6,9, length = length(x1)))
-newdat <- within(newdat, ypred <- predict(mod, newdat))
-## add these predictions as a line to the plot
-lines(ypred ~ x1, data = newdat, col = "dodgerblue", lwd = 2)
+cm <- lmer(lg_Si ~ month + (1|site), data=un)
+mo_e <- Effect("month", partial.residuals=T, cm)
+mo_e <- data.frame(mo_e)
+# add fill
+polygon(c(rev(mo_e$month), mo_e$month), c(rev(mo_e$upper), mo_e$lower), col=t_col("dodgerblue", perc = 70), border = NA)
 #points
-points(subg$Si_ppm[,1][subg$trt=="ungrazed"] ~ subg$month[subg$trt=="ungrazed"],pch=23,col="dodgerblue",bg="dodgerblue",cex=2)
-#points(subg$Si_ppm[,1][subg$trt=="ungrazed"] ~ subg$month[subg$trt=="ungrazed"],type="l",col="dodgerblue",lwd=2)
-arrows(subg$month[subg$trt=="ungrazed"], subg$Si_ppm[,1][subg$trt=="ungrazed"]-subg$Si_ppm[,2][subg$trt=="ungrazed"], subg$month[subg$trt=="ungrazed"], subg$Si_ppm[,1][subg$trt=="ungrazed"]+subg$Si_ppm[,2][subg$trt=="ungrazed"],col="dodgerblue",lwd=2,length=0.05, angle=90, code=3)
+points(chemi$lg_Si[,1][chemi$trt=="ungrazed"] ~ chemi$month[chemi$trt=="ungrazed"],pch=23,col="dodgerblue",bg="dodgerblue",cex=2)
+points(mo_e$fit ~ mo_e$month,type="l",col="dodgerblue",lwd=2)
+arrows(chemi$month[chemi$trt=="ungrazed"], chemi$lg_Si[,1][chemi$trt=="ungrazed"]-chemi$lg_Si[,2][chemi$trt=="ungrazed"], chemi$month[chemi$trt=="ungrazed"], chemi$lg_Si[,1][chemi$trt=="ungrazed"]+chemi$lg_Si[,2][chemi$trt=="ungrazed"],col="dodgerblue",lwd=2,length=0.05, angle=90, code=3)
 
 ##trtpd
-x1 <- all_subg$mo[all_subg$trt=="trtpd"]
-y1 <- all_subg$Si_ppm[all_subg$trt=="trtpd"]
-mod <- lm(y1 ~ x1)
-summary(mod)
-## predict values across range
-newdat <- data.frame(x = seq(6,8, length = length(x1)))
-newdat <- within(newdat, ypred <- predict(mod, newdat))
-## add these predictions as a line to the plot
-lines(ypred ~ x1, data = newdat, col = "firebrick2", lwd = 2)
+cm <- lmer(lg_Si ~ month + (1|site), data=tp)
+mo_e <- Effect("month", partial.residuals=T, cm)
+mo_e <- data.frame(mo_e)
+# add fill
+#polygon(c(rev(mo_e$month), mo_e$month), c(rev(mo_e$upper), mo_e$lower), col=t_col("firebrick2", perc = 70), border = NA)
 #points
-points(subg$Si_ppm[,1][subg$trt=="trtpd"] ~ subg$month[subg$trt=="trtpd"],pch=24,col="firebrick2",bg="firebrick2",cex=2)
-#points(subg$Si_ppm[,1][subg$trt=="trtpd"] ~ subg$month[subg$trt=="trtpd"],type="l",col="firebrick2",lwd=2)
-arrows(subg$month[subg$trt=="trtpd"], subg$Si_ppm[,1][subg$trt=="trtpd"]-subg$Si_ppm[,2][subg$trt=="trtpd"], subg$month[subg$trt=="trtpd"], subg$Si_ppm[,1][subg$trt=="trtpd"]+subg$Si_ppm[,2][subg$trt=="trtpd"],col="firebrick2",lwd=2,length=0.05, angle=90, code=3)
+points(chemi$lg_Si[,1][chemi$trt=="trtpd"] ~ chemi$month[chemi$trt=="trtpd"],pch=24,col="firebrick2",bg="firebrick2",cex=2)
+#points(mo_e$fit ~ mo_e$month,type="l",col="firebrick2",lwd=2)
+arrows(chemi$month[chemi$trt=="trtpd"], chemi$lg_Si[,1][chemi$trt=="trtpd"]-chemi$lg_Si[,2][chemi$trt=="trtpd"], chemi$month[chemi$trt=="trtpd"], chemi$lg_Si[,1][chemi$trt=="trtpd"]+chemi$lg_Si[,2][chemi$trt=="trtpd"],col="firebrick2",lwd=2,length=0.05, angle=90, code=3)
 
 ##untrtpd
-x1 <- all_subg$mo[all_subg$trt=="untrtpd"]
-y1 <- all_subg$Si_ppm[all_subg$trt=="untrtpd"]
-mod <- lm(y1 ~ x1)
-summary(mod)
-## predict values across range
-newdat <- data.frame(x = seq(6,8, length = length(x1)))
-newdat <- within(newdat, ypred <- predict(mod, newdat))
-## add these predictions as a line to the plot
-lines(ypred ~ x1, data = newdat, col = "goldenrod2", lwd = 2)
+cm <- lmer(lg_Si ~ month + (1|site), data=pd)
+mo_e <- Effect("month", partial.residuals=T, cm)
+mo_e <- data.frame(mo_e)
+# add fill
+polygon(c(rev(mo_e$month), mo_e$month), c(rev(mo_e$upper), mo_e$lower), col=t_col("goldenrod2", perc = 70), border = NA)
 #points
-points(subg$Si_ppm[,1][subg$trt=="untrtpd"] ~ subg$month[subg$trt=="untrtpd"],pch=25,col="goldenrod2",bg="goldenrod2",cex=2)
-#points(subg$Si_ppm[,1][subg$trt=="untrtpd"] ~ subg$month[subg$trt=="untrtpd"],type="l",col="goldenrod2",lwd=2)
-arrows(subg$month[subg$trt=="untrtpd"], subg$Si_ppm[,1][subg$trt=="untrtpd"]-subg$Si_ppm[,2][subg$trt=="untrtpd"], subg$month[subg$trt=="untrtpd"], subg$Si_ppm[,1][subg$trt=="untrtpd"]+subg$Si_ppm[,2][subg$trt=="untrtpd"],col="goldenrod2",lwd=2,length=0.05, angle=90, code=3)
+points(chemi$lg_Si[,1][chemi$trt=="untrtpd"] ~ chemi$month[chemi$trt=="untrtpd"],pch=25,col="goldenrod2",bg="goldenrod2",cex=2)
+points(mo_e$fit ~ mo_e$month,type="l",col="goldenrod2",lwd=2)
+arrows(chemi$month[chemi$trt=="untrtpd"], chemi$lg_Si[,1][chemi$trt=="untrtpd"]-chemi$lg_Si[,2][chemi$trt=="untrtpd"], chemi$month[chemi$trt=="untrtpd"], chemi$lg_Si[,1][chemi$trt=="untrtpd"]+chemi$lg_Si[,2][chemi$trt=="untrtpd"],col="goldenrod2",lwd=2,length=0.05, angle=90, code=3)
+
 legend("topright", legend=("F"), bty="n", cex=1.5)
 ##
 
@@ -530,58 +476,4 @@ dev.off()
 ##
 ##################################################################
 ##
-
-##grass Ca
-plot(1, type="n", xlim=c(5.5,9.5), ylim=c(400,5500),las=1,ylab="",xlab="", xaxt='n')
-axis(1, at=c(6,7,8,9),cex.axis=1,labels=c("Jun","Jul","Aug","Sept"))
-box(lwd=2)
-title(ylab="Grass ppm Ca", line=3.5, cex.lab=1.6)
-##bison
-points(subg$Ca_ppm[,1][subg$trt=="bison"] ~ subg$month[subg$trt=="bison"],pch=21,col="sienna",bg="sienna",cex=2)
-points(subg$Ca_ppm[,1][subg$trt=="bison"] ~ subg$month[subg$trt=="bison"],type="l",col="sienna",lwd=2)
-arrows(subg$month[subg$trt=="bison"], subg$Ca_ppm[,1][subg$trt=="bison"]-subg$Ca_ppm[,2][subg$trt=="bison"], subg$month[subg$trt=="bison"], subg$Ca_ppm[,1][subg$trt=="bison"]+subg$Ca_ppm[,2][subg$trt=="bison"],col="sienna",lwd=2,length=0.05, angle=90, code=3)
-##cattle
-points(subg$Ca_ppm[,1][subg$trt=="cattle"] ~ subg$month[subg$trt=="cattle"],pch=22,col="gray0",bg="gray0",cex=2)
-points(subg$Ca_ppm[,1][subg$trt=="cattle"] ~ subg$month[subg$trt=="cattle"],type="l",col="gray0",lwd=2)
-arrows(subg$month[subg$trt=="cattle"], subg$Ca_ppm[,1][subg$trt=="cattle"]-subg$Ca_ppm[,2][subg$trt=="cattle"], subg$month[subg$trt=="cattle"], subg$Ca_ppm[,1][subg$trt=="cattle"]+subg$Ca_ppm[,2][subg$trt=="cattle"],col="gray0",lwd=2,length=0.05, angle=90, code=3)
-##ungrazed
-points(subg$Ca_ppm[,1][subg$trt=="ungrazed"] ~ subg$month[subg$trt=="ungrazed"],pch=23,col="dodgerblue",bg="dodgerblue",cex=2)
-points(subg$Ca_ppm[,1][subg$trt=="ungrazed"] ~ subg$month[subg$trt=="ungrazed"],type="l",col="dodgerblue",lwd=2)
-arrows(subg$month[subg$trt=="ungrazed"], subg$Ca_ppm[,1][subg$trt=="ungrazed"]-subg$Ca_ppm[,2][subg$trt=="ungrazed"], subg$month[subg$trt=="ungrazed"], subg$Ca_ppm[,1][subg$trt=="ungrazed"]+subg$Ca_ppm[,2][subg$trt=="ungrazed"],col="dodgerblue",lwd=2,length=0.05, angle=90, code=3)
-##trtpd
-points(subg$Ca_ppm[,1][subg$trt=="trtpd"] ~ subg$month[subg$trt=="trtpd"],pch=24,col="firebrick2",bg="firebrick2",cex=2)
-points(subg$Ca_ppm[,1][subg$trt=="trtpd"] ~ subg$month[subg$trt=="trtpd"],type="l",col="firebrick2",lwd=2)
-arrows(subg$month[subg$trt=="trtpd"], subg$Ca_ppm[,1][subg$trt=="trtpd"]-subg$Ca_ppm[,2][subg$trt=="trtpd"], subg$month[subg$trt=="trtpd"], subg$Ca_ppm[,1][subg$trt=="trtpd"]+subg$Ca_ppm[,2][subg$trt=="trtpd"],col="firebrick2",lwd=2,length=0.05, angle=90, code=3)
-##untrtpd
-points(subg$Ca_ppm[,1][subg$trt=="untrtpd"] ~ subg$month[subg$trt=="untrtpd"],pch=25,col="goldenrod2",bg="goldenrod2",cex=2)
-points(subg$Ca_ppm[,1][subg$trt=="untrtpd"] ~ subg$month[subg$trt=="untrtpd"],type="l",col="goldenrod2",lwd=2)
-arrows(subg$month[subg$trt=="untrtpd"], subg$Ca_ppm[,1][subg$trt=="untrtpd"]-subg$Ca_ppm[,2][subg$trt=="untrtpd"], subg$month[subg$trt=="untrtpd"], subg$Ca_ppm[,1][subg$trt=="untrtpd"]+subg$Ca_ppm[,2][subg$trt=="untrtpd"],col="goldenrod2",lwd=2,length=0.05, angle=90, code=3)
-
-#########grass C
-plot(1, type="n", xlim=c(5.5,9.5), ylim=c(37.5,48),las=1,ylab="",xlab="", xaxt='n')
-axis(1, at=c(6,7,8,9),cex.axis=1,labels=c("Jun","Jul","Aug","Sept"))
-box(lwd=2)
-title(ylab="Grass %C", line=3, cex.lab=1.6)
-#title(xlab="Month", line=2.5, cex.lab=1.6)
-##bison
-points(subg$percC[,1][subg$trt=="bison"] ~ subg$month[subg$trt=="bison"],pch=21,col="sienna",bg="sienna",cex=2)
-points(subg$percC[,1][subg$trt=="bison"] ~ subg$month[subg$trt=="bison"],type="l",col="sienna",lwd=2)
-arrows(subg$month[subg$trt=="bison"], subg$percC[,1][subg$trt=="bison"]-subg$percC[,2][subg$trt=="bison"], subg$month[subg$trt=="bison"], subg$percC[,1][subg$trt=="bison"]+subg$percC[,2][subg$trt=="bison"],col="sienna",lwd=2,length=0.05, angle=90, code=3)
-##cattle
-points(subg$percC[,1][subg$trt=="cattle"] ~ subg$month[subg$trt=="cattle"],pch=22,col="gray0",bg="gray0",cex=2)
-points(subg$percC[,1][subg$trt=="cattle"] ~ subg$month[subg$trt=="cattle"],type="l",col="gray0",lwd=2)
-arrows(subg$month[subg$trt=="cattle"], subg$percC[,1][subg$trt=="cattle"]-subg$percC[,2][subg$trt=="cattle"], subg$month[subg$trt=="cattle"], subg$percC[,1][subg$trt=="cattle"]+subg$percC[,2][subg$trt=="cattle"],col="gray0",lwd=2,length=0.05, angle=90, code=3)
-##ungrazed
-points(subg$percC[,1][subg$trt=="ungrazed"] ~ subg$month[subg$trt=="ungrazed"],pch=23,col="dodgerblue",bg="dodgerblue",cex=2)
-points(subg$percC[,1][subg$trt=="ungrazed"] ~ subg$month[subg$trt=="ungrazed"],type="l",col="dodgerblue",lwd=2)
-arrows(subg$month[subg$trt=="ungrazed"], subg$percC[,1][subg$trt=="ungrazed"]-subg$percC[,2][subg$trt=="ungrazed"], subg$month[subg$trt=="ungrazed"], subg$percC[,1][subg$trt=="ungrazed"]+subg$percC[,2][subg$trt=="ungrazed"],col="dodgerblue",lwd=2,length=0.05, angle=90, code=3)
-##trtpd
-points(subg$percC[,1][subg$trt=="trtpd"] ~ subg$month[subg$trt=="trtpd"],pch=24,col="firebrick2",bg="firebrick2",cex=2)
-points(subg$percC[,1][subg$trt=="trtpd"] ~ subg$month[subg$trt=="trtpd"],type="l",col="firebrick2",lwd=2)
-arrows(subg$month[subg$trt=="trtpd"], subg$percC[,1][subg$trt=="trtpd"]-subg$percC[,2][subg$trt=="trtpd"], subg$month[subg$trt=="trtpd"], subg$percC[,1][subg$trt=="trtpd"]+subg$percC[,2][subg$trt=="trtpd"],col="firebrick2",lwd=2,length=0.05, angle=90, code=3)
-##untrtpd
-points(subg$percC[,1][subg$trt=="untrtpd"] ~ subg$month[subg$trt=="untrtpd"],pch=25,col="goldenrod2",bg="goldenrod2",cex=2)
-points(subg$percC[,1][subg$trt=="untrtpd"] ~ subg$month[subg$trt=="untrtpd"],type="l",col="goldenrod2",lwd=2)
-arrows(subg$month[subg$trt=="untrtpd"], subg$percC[,1][subg$trt=="untrtpd"]-subg$percC[,2][subg$trt=="untrtpd"], subg$month[subg$trt=="untrtpd"], subg$percC[,1][subg$trt=="untrtpd"]+subg$percC[,2][subg$trt=="untrtpd"],col="goldenrod2",lwd=2,length=0.05, angle=90, code=3)
-
 
