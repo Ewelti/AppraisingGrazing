@@ -66,7 +66,7 @@ tiff(filename = "plots/PastureMeter.tif", width = 6, height = 6, units = 'in', r
 
 par(mar=c(3,4.5,0.2,0.8))
 plot(1, type="n", xlim=c(0.9,4.1), ylim=c(1.27,2.25),ylab="",xlab="", xaxt='n', yaxt='n')
-axis(2, at=c(log10(20+1),log10(40+1),log10(60+1),log10(80+1),log10(100+1),log10(120+1),log10(140+1),log10(160+1),log10(180+1)), labels=c(20,40,60,80,100,120,140,160,180),las=1)
+axis(2, at=c(log10(17+1),log10(20+1),log10(25+1),log10(30+1),log10(40+1),log10(50+1),log10(60+1),log10(80+1),log10(100+1),log10(120+1),log10(140+1),log10(180+1)), labels=c(17,20,25,30,40,50,60,80,100,120,140,180),las=1)
 axis(1, at=c(1,2,3,4),cex.axis=1.1,labels=c("June","July","August","September"))
 box(lwd=2)
 title(ylab=expression("Dry grams/ m"^2), line=2.2, cex.lab=1.6)
