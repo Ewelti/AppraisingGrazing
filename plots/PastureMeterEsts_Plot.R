@@ -64,67 +64,67 @@ tp <- pm[pm$trt=="trtpd",]
 ######################
 tiff(filename = "plots/PastureMeter.tif", width = 6, height = 6, units = 'in', res = 600, compression = 'lzw')
 
-par(mar=c(3,5,0.2,0.8))
-plot(1, type="n", xlim=c(0.9,4.1), ylim=c(1.2,2.25),ylab="",xlab="", xaxt='n', yaxt='n')
-axis(2, at=c(log10(25+1),log10(50+1),log10(100+1),log10(150+1),log10(200+1),log10(250+1)), labels=c(25,50,100,150,200,250),las=1)
+par(mar=c(3,4.5,0.2,0.8))
+plot(1, type="n", xlim=c(0.9,4.1), ylim=c(1.27,2.25),ylab="",xlab="", xaxt='n', yaxt='n')
+axis(2, at=c(log10(20+1),log10(40+1),log10(60+1),log10(80+1),log10(100+1),log10(120+1),log10(140+1),log10(160+1),log10(180+1)), labels=c(20,40,60,80,100,120,140,160,180),las=1)
 axis(1, at=c(1,2,3,4),cex.axis=1.1,labels=c("June","July","August","September"))
 box(lwd=2)
-title(ylab=expression("Dry grams/ m"^2), line=3, cex.lab=1.6)
+title(ylab=expression("Dry grams/ m"^2), line=2.2, cex.lab=1.6)
 
 ##ungrazed
 mo_pmod <- lmer(log10(g_per_m2 +1) ~ poly(rep,2) + (1|line:site), data = un)
 mo_e <- Effect("rep", partial.residuals=T, mo_pmod)
 mo_e <- data.frame(mo_e)
 # add fill
-polygon(c(rev(mo_e$rep), mo_e$rep), c(rev(mo_e$upper), mo_e$lower), col=t_col("dodgerblue", perc = 70), border = NA)
+#polygon(c(rev(mo_e$rep), mo_e$rep), c(rev(mo_e$upper), mo_e$lower), col=t_col("dodgerblue", perc = 70), border = NA)
 #points
-points(ests$g_per_m2_est[ests$trt=="ungrazed"] ~ ests$rep[ests$trt=="ungrazed"],pch=23,col="dodgerblue",bg="dodgerblue",cex=2)
-points(mo_e$fit ~ mo_e$rep,type="l",col="dodgerblue",lwd=2)
-arrows(ests$rep[ests$trt=="ungrazed"], ests$g_per_m2_est[ests$trt=="ungrazed"]-ests$g_per_m2_SE[ests$trt=="ungrazed"], ests$rep[ests$trt=="ungrazed"], ests$g_per_m2_est[ests$trt=="ungrazed"]+ests$g_per_m2_SE[ests$trt=="ungrazed"],col="dodgerblue",lwd=2,length=0.05, angle=90, code=3)
+points(ests$g_per_m2_est[ests$trt=="ungrazed"] ~ ests$rep[ests$trt=="ungrazed"],pch=23,col=t_col("dodgerblue", perc = 40),bg=t_col("dodgerblue", perc = 40),cex=2)
+points(mo_e$fit ~ mo_e$rep,type="l",col=t_col("dodgerblue", perc = 40),lwd=2)
+arrows(ests$rep[ests$trt=="ungrazed"], ests$g_per_m2_est[ests$trt=="ungrazed"]-ests$g_per_m2_SE[ests$trt=="ungrazed"], ests$rep[ests$trt=="ungrazed"], ests$g_per_m2_est[ests$trt=="ungrazed"]+ests$g_per_m2_SE[ests$trt=="ungrazed"],col=t_col("dodgerblue", perc = 40),lwd=2,length=0.05, angle=90, code=3)
 
 ##bison
 mo_pmod <- lmer(log10(g_per_m2 +1) ~ poly(rep,2) + (1|line:site), data = b)
 mo_e <- Effect("rep", partial.residuals=T, mo_pmod)
 mo_e <- data.frame(mo_e)
 # add fill
-polygon(c(rev(mo_e$rep), mo_e$rep), c(rev(mo_e$upper), mo_e$lower), col=t_col("sienna", perc = 70), border = NA)
+#polygon(c(rev(mo_e$rep), mo_e$rep), c(rev(mo_e$upper), mo_e$lower), col=t_col("sienna", perc = 70), border = NA)
 #points
-points(ests$g_per_m2_est[ests$trt=="bison"] ~ ests$rep[ests$trt=="bison"],pch=21,col="sienna",bg="sienna",cex=2)
-arrows(ests$rep[ests$trt=="bison"], ests$g_per_m2_est[ests$trt=="bison"]-ests$g_per_m2_SE[ests$trt=="bison"], ests$rep[ests$trt=="bison"], ests$g_per_m2_est[ests$trt=="bison"]+ests$g_per_m2_SE[ests$trt=="bison"],col="sienna",lwd=2,length=0.05, angle=90, code=3)
-points(mo_e$fit ~ mo_e$rep,type="l",col="sienna",lwd=2)
+points(ests$g_per_m2_est[ests$trt=="bison"] ~ ests$rep[ests$trt=="bison"],pch=21,col=t_col("sienna", perc = 40),bg=t_col("sienna", perc = 40),cex=2)
+arrows(ests$rep[ests$trt=="bison"], ests$g_per_m2_est[ests$trt=="bison"]-ests$g_per_m2_SE[ests$trt=="bison"], ests$rep[ests$trt=="bison"], ests$g_per_m2_est[ests$trt=="bison"]+ests$g_per_m2_SE[ests$trt=="bison"],col=t_col("sienna", perc = 40),lwd=2,length=0.05, angle=90, code=3)
+points(mo_e$fit ~ mo_e$rep,type="l",col=t_col("sienna", perc = 40),lwd=2)
 
 ##cattle
 mo_pmod <- lmer(log10(g_per_m2 +1) ~ poly(rep,2) + (1|line:site), data = ca)
 mo_e <- Effect("rep", partial.residuals=T, mo_pmod)
 mo_e <- data.frame(mo_e)
 # add fill
-polygon(c(rev(mo_e$rep), mo_e$rep), c(rev(mo_e$upper), mo_e$lower), col=t_col("gray0", perc = 70), border = NA)
+#polygon(c(rev(mo_e$rep), mo_e$rep), c(rev(mo_e$upper), mo_e$lower), col=t_col("gray0", perc = 70), border = NA)
 #points
-points(ests$g_per_m2_est[ests$trt=="cattle"] ~ ests$rep[ests$trt=="cattle"],pch=22,col="gray0",bg="gray0",cex=2)
-points(mo_e$fit ~ mo_e$rep,type="l",col="gray0",lwd=2)
-arrows(ests$rep[ests$trt=="cattle"], ests$g_per_m2_est[ests$trt=="cattle"]-ests$g_per_m2_SE[ests$trt=="cattle"], ests$rep[ests$trt=="cattle"], ests$g_per_m2_est[ests$trt=="cattle"]+ests$g_per_m2_SE[ests$trt=="cattle"],col="gray0",lwd=2,length=0.05, angle=90, code=3)
+points(ests$g_per_m2_est[ests$trt=="cattle"] ~ ests$rep[ests$trt=="cattle"],pch=22,col=t_col("gray0", perc = 40),bg=t_col("gray0", perc = 40),cex=2)
+points(mo_e$fit ~ mo_e$rep,type="l",col=t_col("gray0", perc = 40),lwd=2)
+arrows(ests$rep[ests$trt=="cattle"], ests$g_per_m2_est[ests$trt=="cattle"]-ests$g_per_m2_SE[ests$trt=="cattle"], ests$rep[ests$trt=="cattle"], ests$g_per_m2_est[ests$trt=="cattle"]+ests$g_per_m2_SE[ests$trt=="cattle"],col=t_col("gray0", perc = 40),lwd=2,length=0.05, angle=90, code=3)
 
 ##untrtpd
 mo_pmod <- lmer(log10(g_per_m2 +1) ~ poly(rep,2) + (1|line:site), data = pd)
 mo_e <- Effect("rep", partial.residuals=T, mo_pmod)
 mo_e <- data.frame(mo_e)
 # add fill
-polygon(c(rev(mo_e$rep), mo_e$rep), c(rev(mo_e$upper), mo_e$lower), col=t_col("goldenrod2", perc = 70), border = NA)
+#polygon(c(rev(mo_e$rep), mo_e$rep), c(rev(mo_e$upper), mo_e$lower), col=t_col("goldenrod2", perc = 70), border = NA)
 #points
-points(ests$g_per_m2_est[ests$trt=="untrtpd"] ~ ests$rep[ests$trt=="untrtpd"],pch=25,col="goldenrod2",bg="goldenrod2",cex=2)
-points(mo_e$fit ~ mo_e$rep,type="l",col="goldenrod2",lwd=2)
-arrows(ests$rep[ests$trt=="untrtpd"], ests$g_per_m2_est[ests$trt=="untrtpd"]-ests$g_per_m2_SE[ests$trt=="untrtpd"], ests$rep[ests$trt=="untrtpd"], ests$g_per_m2_est[ests$trt=="untrtpd"]+ests$g_per_m2_SE[ests$trt=="untrtpd"],col="goldenrod2",lwd=2,length=0.05, angle=90, code=3)
+points(ests$g_per_m2_est[ests$trt=="untrtpd"] ~ ests$rep[ests$trt=="untrtpd"],pch=25,col=t_col("goldenrod2", perc = 40),bg=t_col("goldenrod2", perc = 40),cex=2)
+points(mo_e$fit ~ mo_e$rep,type="l",col=t_col("goldenrod2", perc = 40),lwd=2)
+arrows(ests$rep[ests$trt=="untrtpd"], ests$g_per_m2_est[ests$trt=="untrtpd"]-ests$g_per_m2_SE[ests$trt=="untrtpd"], ests$rep[ests$trt=="untrtpd"], ests$g_per_m2_est[ests$trt=="untrtpd"]+ests$g_per_m2_SE[ests$trt=="untrtpd"],col=t_col("goldenrod2", perc = 40),lwd=2,length=0.05, angle=90, code=3)
 
 ##trtpd
 mo_pmod <- lmer(log10(g_per_m2 +1) ~ poly(rep,2) + (1|line:site), data = tp)
 mo_e <- Effect("rep", partial.residuals=T, mo_pmod)
 mo_e <- data.frame(mo_e)
 # add fill
-polygon(c(rev(mo_e$rep), mo_e$rep), c(rev(mo_e$upper), mo_e$lower), col=t_col("firebrick2", perc = 70), border = NA)
+#polygon(c(rev(mo_e$rep), mo_e$rep), c(rev(mo_e$upper), mo_e$lower), col=t_col("firebrick2", perc = 70), border = NA)
 #points
-points(ests$g_per_m2_est[ests$trt=="trtpd"] ~ ests$rep[ests$trt=="trtpd"],pch=24,col="firebrick2",bg="firebrick2",cex=2)
-points(mo_e$fit ~ mo_e$rep,type="l",col="firebrick2",lwd=2)
-arrows(ests$rep[ests$trt=="trtpd"], ests$g_per_m2_est[ests$trt=="trtpd"]-ests$g_per_m2_SE[ests$trt=="trtpd"], ests$rep[ests$trt=="trtpd"], ests$g_per_m2_est[ests$trt=="trtpd"]+ests$g_per_m2_SE[ests$trt=="trtpd"],col="firebrick2",lwd=2,length=0.05, angle=90, code=3)
+points(ests$g_per_m2_est[ests$trt=="trtpd"] ~ ests$rep[ests$trt=="trtpd"],pch=24,col=t_col("firebrick2", perc = 40),bg=t_col("firebrick2", perc = 40),cex=2)
+points(mo_e$fit ~ mo_e$rep,type="l",col=t_col("firebrick2", perc = 40),lwd=2)
+arrows(ests$rep[ests$trt=="trtpd"], ests$g_per_m2_est[ests$trt=="trtpd"]-ests$g_per_m2_SE[ests$trt=="trtpd"], ests$rep[ests$trt=="trtpd"], ests$g_per_m2_est[ests$trt=="trtpd"]+ests$g_per_m2_SE[ests$trt=="trtpd"],col=t_col("firebrick2", perc = 40),lwd=2,length=0.05, angle=90, code=3)
 
 legend("bottomright",legend=c("Ungrazed","Bison","Cattle","Untrt PD","Trt PD"), bty="n", pt.cex=2,cex=1.3, pch=c(23,21,22,25,24), pt.bg=c("dodgerblue","sienna","gray0","goldenrod2","firebrick2"),col=c("dodgerblue","sienna","gray0","goldenrod2","firebrick2"))
 

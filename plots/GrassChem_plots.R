@@ -67,10 +67,10 @@ nut <- na.omit(est$lg_N)
 min(nut)
 max(nut)
 plot(1, type="n", xlim=c(5.9,9.1), ylim=c(-0.2,0.48), ylab="",xlab="", xaxt='n', yaxt='n')
-axis(2, at=c(log10(0.5),log10(1),log10(1.5),log10(2),log10(2.5),log10(3)), labels=c(0.5,1,1.5,2,2.5,3),las=1)
+axis(2, at=c(log10(0.75),log10(1),log10(1.25),log10(1.5),log10(2),log10(2.5),log10(3)), labels=c(0.75,1,1.25,1.5,2,2.5,3),las=1)
 axis(1, at=c(6,7,8,9),cex.axis=1,labels=c("Jun","Jul","Aug","Sept"))
 box(lwd=2)
-title(ylab="Grass %N", line=3, cex.lab=1.6)
+title(ylab="Grass %N", line=3.5, cex.lab=1.6)
 ##bison
 cm <- lmer(lg_N ~ month + (1|site), data=b)
 mo_e <- Effect("month", partial.residuals=T, cm)
@@ -78,9 +78,9 @@ mo_e <- data.frame(mo_e)
 # add fill
 #polygon(c(rev(mo_e$month), mo_e$month), c(rev(mo_e$upper), mo_e$lower), col=t_col("sienna", perc = 70), border = NA)
 #points
-points(chemi$lg_N[,1][chemi$trt=="bison"] ~ chemi$month[chemi$trt=="bison"],pch=21,col="sienna",bg="sienna",cex=2)
-points(mo_e$fit ~ mo_e$month,type="l",col="sienna",lwd=2)
-arrows(chemi$month[chemi$trt=="bison"], chemi$lg_N[,1][chemi$trt=="bison"]-chemi$lg_N[,2][chemi$trt=="bison"], chemi$month[chemi$trt=="bison"], chemi$lg_N[,1][chemi$trt=="bison"]+chemi$lg_N[,2][chemi$trt=="bison"],col="sienna",lwd=2,length=0.05, angle=90, code=3)
+points(chemi$lg_N[,1][chemi$trt=="bison"] ~ chemi$month[chemi$trt=="bison"],pch=21,col=t_col("sienna", perc = 40),bg=t_col("sienna", perc = 40),cex=2)
+points(mo_e$fit ~ mo_e$month,type="l",col=t_col("sienna", perc = 40),lwd=2)
+arrows(chemi$month[chemi$trt=="bison"], chemi$lg_N[,1][chemi$trt=="bison"]-chemi$lg_N[,2][chemi$trt=="bison"], chemi$month[chemi$trt=="bison"], chemi$lg_N[,1][chemi$trt=="bison"]+chemi$lg_N[,2][chemi$trt=="bison"],col=t_col("sienna", perc = 40),lwd=2,length=0.05, angle=90, code=3)
 
 ##cattle
 cm <- lmer(lg_N ~ month + (1|site), data=ca)
@@ -89,9 +89,9 @@ mo_e <- data.frame(mo_e)
 # add fill
 #polygon(c(rev(mo_e$month), mo_e$month), c(rev(mo_e$upper), mo_e$lower), col=t_col("gray0", perc = 70), border = NA)
 #points
-points(chemi$lg_N[,1][chemi$trt=="cattle"] ~ chemi$month[chemi$trt=="cattle"],pch=22,col="gray0",bg="gray0",cex=2)
-points(mo_e$fit ~ mo_e$month,type="l",col="gray0",lwd=2)
-arrows(chemi$month[chemi$trt=="cattle"], chemi$lg_N[,1][chemi$trt=="cattle"]-chemi$lg_N[,2][chemi$trt=="cattle"], chemi$month[chemi$trt=="cattle"], chemi$lg_N[,1][chemi$trt=="cattle"]+chemi$lg_N[,2][chemi$trt=="cattle"],col="gray0",lwd=2,length=0.05, angle=90, code=3)
+points(chemi$lg_N[,1][chemi$trt=="cattle"] ~ chemi$month[chemi$trt=="cattle"],pch=22,col=t_col("gray0", perc = 40),bg=t_col("gray0", perc = 40),cex=2)
+points(mo_e$fit ~ mo_e$month,type="l",col=t_col("gray0", perc = 40),lwd=2)
+arrows(chemi$month[chemi$trt=="cattle"], chemi$lg_N[,1][chemi$trt=="cattle"]-chemi$lg_N[,2][chemi$trt=="cattle"], chemi$month[chemi$trt=="cattle"], chemi$lg_N[,1][chemi$trt=="cattle"]+chemi$lg_N[,2][chemi$trt=="cattle"],col=t_col("gray0", perc = 40),lwd=2,length=0.05, angle=90, code=3)
 
 ##ungrazed
 cm <- lmer(lg_N ~ month + (1|site), data=un)
@@ -100,9 +100,9 @@ mo_e <- data.frame(mo_e)
 # add fill
 #polygon(c(rev(mo_e$month), mo_e$month), c(rev(mo_e$upper), mo_e$lower), col=t_col("dodgerblue", perc = 70), border = NA)
 #points
-points(chemi$lg_N[,1][chemi$trt=="ungrazed"] ~ chemi$month[chemi$trt=="ungrazed"],pch=23,col="dodgerblue",bg="dodgerblue",cex=2)
-points(mo_e$fit ~ mo_e$month,type="l",col="dodgerblue",lwd=2)
-arrows(chemi$month[chemi$trt=="ungrazed"], chemi$lg_N[,1][chemi$trt=="ungrazed"]-chemi$lg_N[,2][chemi$trt=="ungrazed"], chemi$month[chemi$trt=="ungrazed"], chemi$lg_N[,1][chemi$trt=="ungrazed"]+chemi$lg_N[,2][chemi$trt=="ungrazed"],col="dodgerblue",lwd=2,length=0.05, angle=90, code=3)
+points(chemi$lg_N[,1][chemi$trt=="ungrazed"] ~ chemi$month[chemi$trt=="ungrazed"],pch=23,col=t_col("dodgerblue", perc = 40),bg=t_col("dodgerblue", perc = 40),cex=2)
+points(mo_e$fit ~ mo_e$month,type="l",col=t_col("dodgerblue", perc = 40),lwd=2)
+arrows(chemi$month[chemi$trt=="ungrazed"], chemi$lg_N[,1][chemi$trt=="ungrazed"]-chemi$lg_N[,2][chemi$trt=="ungrazed"], chemi$month[chemi$trt=="ungrazed"], chemi$lg_N[,1][chemi$trt=="ungrazed"]+chemi$lg_N[,2][chemi$trt=="ungrazed"],col=t_col("dodgerblue", perc = 40),lwd=2,length=0.05, angle=90, code=3)
 
 ##trtpd
 cm <- lmer(lg_N ~ month + (1|site), data=tp)
@@ -111,9 +111,9 @@ mo_e <- data.frame(mo_e)
 # add fill
 ##polygon(c(rev(mo_e$month), mo_e$month), c(rev(mo_e$upper), mo_e$lower), col=t_col("firebrick2", perc = 70), border = NA)
 #points
-points(chemi$lg_N[,1][chemi$trt=="trtpd"] ~ chemi$month[chemi$trt=="trtpd"],pch=24,col="firebrick2",bg="firebrick2",cex=2)
-#points(mo_e$fit ~ mo_e$month,type="l",col="firebrick2",lwd=2)
-arrows(chemi$month[chemi$trt=="trtpd"], chemi$lg_N[,1][chemi$trt=="trtpd"]-chemi$lg_N[,2][chemi$trt=="trtpd"], chemi$month[chemi$trt=="trtpd"], chemi$lg_N[,1][chemi$trt=="trtpd"]+chemi$lg_N[,2][chemi$trt=="trtpd"],col="firebrick2",lwd=2,length=0.05, angle=90, code=3)
+points(chemi$lg_N[,1][chemi$trt=="trtpd"] ~ chemi$month[chemi$trt=="trtpd"],pch=24,col=t_col("firebrick2", perc = 40),bg=t_col("firebrick2", perc = 40),cex=2)
+#points(mo_e$fit ~ mo_e$month,type="l",col=t_col("firebrick2", perc = 40),lwd=2)
+arrows(chemi$month[chemi$trt=="trtpd"], chemi$lg_N[,1][chemi$trt=="trtpd"]-chemi$lg_N[,2][chemi$trt=="trtpd"], chemi$month[chemi$trt=="trtpd"], chemi$lg_N[,1][chemi$trt=="trtpd"]+chemi$lg_N[,2][chemi$trt=="trtpd"],col=t_col("firebrick2", perc = 40),lwd=2,length=0.05, angle=90, code=3)
 
 ##untrtpd
 cm <- lmer(lg_N ~ month + (1|site), data=pd)
@@ -122,9 +122,9 @@ mo_e <- data.frame(mo_e)
 # add fill
 #polygon(c(rev(mo_e$month), mo_e$month), c(rev(mo_e$upper), mo_e$lower), col=t_col("goldenrod2", perc = 70), border = NA)
 #points
-points(chemi$lg_N[,1][chemi$trt=="untrtpd"] ~ chemi$month[chemi$trt=="untrtpd"],pch=25,col="goldenrod2",bg="goldenrod2",cex=2)
-points(mo_e$fit ~ mo_e$month,type="l",col="goldenrod2",lwd=2)
-arrows(chemi$month[chemi$trt=="untrtpd"], chemi$lg_N[,1][chemi$trt=="untrtpd"]-chemi$lg_N[,2][chemi$trt=="untrtpd"], chemi$month[chemi$trt=="untrtpd"], chemi$lg_N[,1][chemi$trt=="untrtpd"]+chemi$lg_N[,2][chemi$trt=="untrtpd"],col="goldenrod2",lwd=2,length=0.05, angle=90, code=3)
+points(chemi$lg_N[,1][chemi$trt=="untrtpd"] ~ chemi$month[chemi$trt=="untrtpd"],pch=25,col=t_col("goldenrod2", perc = 40),bg=t_col("goldenrod2", perc = 40),cex=2)
+points(mo_e$fit ~ mo_e$month,type="l",col=t_col("goldenrod2", perc = 40),lwd=2)
+arrows(chemi$month[chemi$trt=="untrtpd"], chemi$lg_N[,1][chemi$trt=="untrtpd"]-chemi$lg_N[,2][chemi$trt=="untrtpd"], chemi$month[chemi$trt=="untrtpd"], chemi$lg_N[,1][chemi$trt=="untrtpd"]+chemi$lg_N[,2][chemi$trt=="untrtpd"],col=t_col("goldenrod2", perc = 40),lwd=2,length=0.05, angle=90, code=3)
 
 legend("topright", legend=("A"), bty="n", cex=1.5)
 
@@ -134,10 +134,10 @@ nut <- na.omit(est$lg_P)
 min(nut)
 max(nut)
 plot(1, type="n", xlim=c(5.9,9.1), ylim=c(2.7,3.38), ylab="",xlab="", xaxt='n', yaxt='n')
-axis(2, at=c(log10(500),log10(1000),log10(1500),log10(2000),log10(2500)), labels=c(500,1000,1500,2000,2500),las=1)
+axis(2, at=c(log10(500),log10(750),log10(1000),log10(1500),log10(2000),log10(2500)), labels=c(500,750,1000,1500,2000,2500),las=1)
 axis(1, at=c(6,7,8,9),cex.axis=1,labels=c("Jun","Jul","Aug","Sept"))
 box(lwd=2)
-title(ylab="Grass ppm P", line=3, cex.lab=1.6)
+title(ylab="Grass ppm P", line=3.5, cex.lab=1.6)
 
 ##bison
 cm <- lmer(lg_P ~ month + (1|site), data=b)
@@ -146,9 +146,9 @@ mo_e <- data.frame(mo_e)
 # add fill
 #polygon(c(rev(mo_e$month), mo_e$month), c(rev(mo_e$upper), mo_e$lower), col=t_col("sienna", perc = 70), border = NA)
 #points
-points(chemi$lg_P[,1][chemi$trt=="bison"] ~ chemi$month[chemi$trt=="bison"],pch=21,col="sienna",bg="sienna",cex=2)
-points(mo_e$fit ~ mo_e$month,type="l",col="sienna",lwd=2)
-arrows(chemi$month[chemi$trt=="bison"], chemi$lg_P[,1][chemi$trt=="bison"]-chemi$lg_P[,2][chemi$trt=="bison"], chemi$month[chemi$trt=="bison"], chemi$lg_P[,1][chemi$trt=="bison"]+chemi$lg_P[,2][chemi$trt=="bison"],col="sienna",lwd=2,length=0.05, angle=90, code=3)
+points(chemi$lg_P[,1][chemi$trt=="bison"] ~ chemi$month[chemi$trt=="bison"],pch=21,col=t_col("sienna", perc = 40),bg=t_col("sienna", perc = 40),cex=2)
+points(mo_e$fit ~ mo_e$month,type="l",col=t_col("sienna", perc = 40),lwd=2)
+arrows(chemi$month[chemi$trt=="bison"], chemi$lg_P[,1][chemi$trt=="bison"]-chemi$lg_P[,2][chemi$trt=="bison"], chemi$month[chemi$trt=="bison"], chemi$lg_P[,1][chemi$trt=="bison"]+chemi$lg_P[,2][chemi$trt=="bison"],col=t_col("sienna", perc = 40),lwd=2,length=0.05, angle=90, code=3)
 
 ##cattle
 cm <- lmer(lg_P ~ month + (1|site), data=ca)
@@ -157,9 +157,9 @@ mo_e <- data.frame(mo_e)
 # add fill
 #polygon(c(rev(mo_e$month), mo_e$month), c(rev(mo_e$upper), mo_e$lower), col=t_col("gray0", perc = 70), border = NA)
 #points
-points(chemi$lg_P[,1][chemi$trt=="cattle"] ~ chemi$month[chemi$trt=="cattle"],pch=22,col="gray0",bg="gray0",cex=2)
-points(mo_e$fit ~ mo_e$month,type="l",col="gray0",lwd=2)
-arrows(chemi$month[chemi$trt=="cattle"], chemi$lg_P[,1][chemi$trt=="cattle"]-chemi$lg_P[,2][chemi$trt=="cattle"], chemi$month[chemi$trt=="cattle"], chemi$lg_P[,1][chemi$trt=="cattle"]+chemi$lg_P[,2][chemi$trt=="cattle"],col="gray0",lwd=2,length=0.05, angle=90, code=3)
+points(chemi$lg_P[,1][chemi$trt=="cattle"] ~ chemi$month[chemi$trt=="cattle"],pch=22,col=t_col("gray0", perc = 40),bg=t_col("gray0", perc = 40),cex=2)
+points(mo_e$fit ~ mo_e$month,type="l",col=t_col("gray0", perc = 40),lwd=2)
+arrows(chemi$month[chemi$trt=="cattle"], chemi$lg_P[,1][chemi$trt=="cattle"]-chemi$lg_P[,2][chemi$trt=="cattle"], chemi$month[chemi$trt=="cattle"], chemi$lg_P[,1][chemi$trt=="cattle"]+chemi$lg_P[,2][chemi$trt=="cattle"],col=t_col("gray0", perc = 40),lwd=2,length=0.05, angle=90, code=3)
 
 ##ungrazed
 cm <- lmer(lg_P ~ month + (1|site), data=un)
@@ -168,9 +168,9 @@ mo_e <- data.frame(mo_e)
 # add fill
 #polygon(c(rev(mo_e$month), mo_e$month), c(rev(mo_e$upper), mo_e$lower), col=t_col("dodgerblue", perc = 70), border = NA)
 #points
-points(chemi$lg_P[,1][chemi$trt=="ungrazed"] ~ chemi$month[chemi$trt=="ungrazed"],pch=23,col="dodgerblue",bg="dodgerblue",cex=2)
-points(mo_e$fit ~ mo_e$month,type="l",col="dodgerblue",lwd=2)
-arrows(chemi$month[chemi$trt=="ungrazed"], chemi$lg_P[,1][chemi$trt=="ungrazed"]-chemi$lg_P[,2][chemi$trt=="ungrazed"], chemi$month[chemi$trt=="ungrazed"], chemi$lg_P[,1][chemi$trt=="ungrazed"]+chemi$lg_P[,2][chemi$trt=="ungrazed"],col="dodgerblue",lwd=2,length=0.05, angle=90, code=3)
+points(chemi$lg_P[,1][chemi$trt=="ungrazed"] ~ chemi$month[chemi$trt=="ungrazed"],pch=23,col=t_col("dodgerblue", perc = 40),bg=t_col("dodgerblue", perc = 40),cex=2)
+points(mo_e$fit ~ mo_e$month,type="l",col=t_col("dodgerblue", perc = 40),lwd=2)
+arrows(chemi$month[chemi$trt=="ungrazed"], chemi$lg_P[,1][chemi$trt=="ungrazed"]-chemi$lg_P[,2][chemi$trt=="ungrazed"], chemi$month[chemi$trt=="ungrazed"], chemi$lg_P[,1][chemi$trt=="ungrazed"]+chemi$lg_P[,2][chemi$trt=="ungrazed"],col=t_col("dodgerblue", perc = 40),lwd=2,length=0.05, angle=90, code=3)
 
 ##trtpd
 cm <- lmer(lg_P ~ month + (1|site), data=tp)
@@ -179,9 +179,9 @@ mo_e <- data.frame(mo_e)
 # add fill
 ##polygon(c(rev(mo_e$month), mo_e$month), c(rev(mo_e$upper), mo_e$lower), col=t_col("firebrick2", perc = 70), border = NA)
 #points
-points(chemi$lg_P[,1][chemi$trt=="trtpd"] ~ chemi$month[chemi$trt=="trtpd"],pch=24,col="firebrick2",bg="firebrick2",cex=2)
-#points(mo_e$fit ~ mo_e$month,type="l",col="firebrick2",lwd=2)
-arrows(chemi$month[chemi$trt=="trtpd"], chemi$lg_P[,1][chemi$trt=="trtpd"]-chemi$lg_P[,2][chemi$trt=="trtpd"], chemi$month[chemi$trt=="trtpd"], chemi$lg_P[,1][chemi$trt=="trtpd"]+chemi$lg_P[,2][chemi$trt=="trtpd"],col="firebrick2",lwd=2,length=0.05, angle=90, code=3)
+points(chemi$lg_P[,1][chemi$trt=="trtpd"] ~ chemi$month[chemi$trt=="trtpd"],pch=24,col=t_col("firebrick2", perc = 40),bg=t_col("firebrick2", perc = 40),cex=2)
+#points(mo_e$fit ~ mo_e$month,type="l",col=t_col("firebrick2", perc = 40),lwd=2)
+arrows(chemi$month[chemi$trt=="trtpd"], chemi$lg_P[,1][chemi$trt=="trtpd"]-chemi$lg_P[,2][chemi$trt=="trtpd"], chemi$month[chemi$trt=="trtpd"], chemi$lg_P[,1][chemi$trt=="trtpd"]+chemi$lg_P[,2][chemi$trt=="trtpd"],col=t_col("firebrick2", perc = 40),lwd=2,length=0.05, angle=90, code=3)
 
 ##untrtpd
 cm <- lmer(lg_P ~ month + (1|site), data=pd)
@@ -190,9 +190,9 @@ mo_e <- data.frame(mo_e)
 # add fill
 #polygon(c(rev(mo_e$month), mo_e$month), c(rev(mo_e$upper), mo_e$lower), col=t_col("goldenrod2", perc = 70), border = NA)
 #points
-points(chemi$lg_P[,1][chemi$trt=="untrtpd"] ~ chemi$month[chemi$trt=="untrtpd"],pch=25,col="goldenrod2",bg="goldenrod2",cex=2)
-points(mo_e$fit ~ mo_e$month,type="l",col="goldenrod2",lwd=2)
-arrows(chemi$month[chemi$trt=="untrtpd"], chemi$lg_P[,1][chemi$trt=="untrtpd"]-chemi$lg_P[,2][chemi$trt=="untrtpd"], chemi$month[chemi$trt=="untrtpd"], chemi$lg_P[,1][chemi$trt=="untrtpd"]+chemi$lg_P[,2][chemi$trt=="untrtpd"],col="goldenrod2",lwd=2,length=0.05, angle=90, code=3)
+points(chemi$lg_P[,1][chemi$trt=="untrtpd"] ~ chemi$month[chemi$trt=="untrtpd"],pch=25,col=t_col("goldenrod2", perc = 40),bg=t_col("goldenrod2", perc = 40),cex=2)
+points(mo_e$fit ~ mo_e$month,type="l",col=t_col("goldenrod2", perc = 40),lwd=2)
+arrows(chemi$month[chemi$trt=="untrtpd"], chemi$lg_P[,1][chemi$trt=="untrtpd"]-chemi$lg_P[,2][chemi$trt=="untrtpd"], chemi$month[chemi$trt=="untrtpd"], chemi$lg_P[,1][chemi$trt=="untrtpd"]+chemi$lg_P[,2][chemi$trt=="untrtpd"],col=t_col("goldenrod2", perc = 40),lwd=2,length=0.05, angle=90, code=3)
 
 legend("topright", legend=("B"), bty="n", cex=1.5)
 
@@ -202,10 +202,10 @@ nut <- na.omit(est$lg_K)
 min(nut)
 max(nut)
 plot(1, type="n", xlim=c(5.9,9.1), ylim=c(3.6,4.4), ylab="",xlab="", xaxt='n', yaxt='n')
-axis(2, at=c(log10(5000),log10(10000),log10(15000),log10(20000),log10(25000)), labels=c(5000,10000,15000,20000,25000),las=1)
+axis(2, at=c(log10(5000),log10(7500),log10(10000),log10(15000),log10(20000),log10(25000)), labels=c(5000,7500,10000,15000,20000,25000),las=1)
 axis(1, at=c(6,7,8,9),cex.axis=1,labels=c("Jun","Jul","Aug","Sept"))
 box(lwd=2)
-title(ylab="Grass ppm K", line=3, cex.lab=1.6)
+title(ylab="Grass ppm K", line=3.5, cex.lab=1.6)
 
 ##bison
 cm <- lmer(lg_K ~ month + (1|site), data=b)
@@ -214,9 +214,9 @@ mo_e <- data.frame(mo_e)
 # add fill
 #polygon(c(rev(mo_e$month), mo_e$month), c(rev(mo_e$upper), mo_e$lower), col=t_col("sienna", perc = 70), border = NA)
 #points
-points(chemi$lg_K[,1][chemi$trt=="bison"] ~ chemi$month[chemi$trt=="bison"],pch=21,col="sienna",bg="sienna",cex=2)
-points(mo_e$fit ~ mo_e$month,type="l",col="sienna",lwd=2)
-arrows(chemi$month[chemi$trt=="bison"], chemi$lg_K[,1][chemi$trt=="bison"]-chemi$lg_K[,2][chemi$trt=="bison"], chemi$month[chemi$trt=="bison"], chemi$lg_K[,1][chemi$trt=="bison"]+chemi$lg_K[,2][chemi$trt=="bison"],col="sienna",lwd=2,length=0.05, angle=90, code=3)
+points(chemi$lg_K[,1][chemi$trt=="bison"] ~ chemi$month[chemi$trt=="bison"],pch=21,col=t_col("sienna", perc = 40),bg=t_col("sienna", perc = 40),cex=2)
+points(mo_e$fit ~ mo_e$month,type="l",col=t_col("sienna", perc = 40),lwd=2)
+arrows(chemi$month[chemi$trt=="bison"], chemi$lg_K[,1][chemi$trt=="bison"]-chemi$lg_K[,2][chemi$trt=="bison"], chemi$month[chemi$trt=="bison"], chemi$lg_K[,1][chemi$trt=="bison"]+chemi$lg_K[,2][chemi$trt=="bison"],col=t_col("sienna", perc = 40),lwd=2,length=0.05, angle=90, code=3)
 
 ##cattle
 cm <- lmer(lg_K ~ month + (1|site), data=ca)
@@ -225,9 +225,9 @@ mo_e <- data.frame(mo_e)
 # add fill
 #polygon(c(rev(mo_e$month), mo_e$month), c(rev(mo_e$upper), mo_e$lower), col=t_col("gray0", perc = 70), border = NA)
 #points
-points(chemi$lg_K[,1][chemi$trt=="cattle"] ~ chemi$month[chemi$trt=="cattle"],pch=22,col="gray0",bg="gray0",cex=2)
-points(mo_e$fit ~ mo_e$month,type="l",col="gray0",lwd=2)
-arrows(chemi$month[chemi$trt=="cattle"], chemi$lg_K[,1][chemi$trt=="cattle"]-chemi$lg_K[,2][chemi$trt=="cattle"], chemi$month[chemi$trt=="cattle"], chemi$lg_K[,1][chemi$trt=="cattle"]+chemi$lg_K[,2][chemi$trt=="cattle"],col="gray0",lwd=2,length=0.05, angle=90, code=3)
+points(chemi$lg_K[,1][chemi$trt=="cattle"] ~ chemi$month[chemi$trt=="cattle"],pch=22,col=t_col("gray0", perc = 40),bg=t_col("gray0", perc = 40),cex=2)
+points(mo_e$fit ~ mo_e$month,type="l",col=t_col("gray0", perc = 40),lwd=2, lty=2)
+arrows(chemi$month[chemi$trt=="cattle"], chemi$lg_K[,1][chemi$trt=="cattle"]-chemi$lg_K[,2][chemi$trt=="cattle"], chemi$month[chemi$trt=="cattle"], chemi$lg_K[,1][chemi$trt=="cattle"]+chemi$lg_K[,2][chemi$trt=="cattle"],col=t_col("gray0", perc = 40),lwd=2,length=0.05, angle=90, code=3)
 
 ##ungrazed
 cm <- lmer(lg_K ~ month + (1|site), data=un)
@@ -236,9 +236,9 @@ mo_e <- data.frame(mo_e)
 # add fill
 #polygon(c(rev(mo_e$month), mo_e$month), c(rev(mo_e$upper), mo_e$lower), col=t_col("dodgerblue", perc = 70), border = NA)
 #points
-points(chemi$lg_K[,1][chemi$trt=="ungrazed"] ~ chemi$month[chemi$trt=="ungrazed"],pch=23,col="dodgerblue",bg="dodgerblue",cex=2)
-points(mo_e$fit ~ mo_e$month,type="l",col="dodgerblue",lwd=2)
-arrows(chemi$month[chemi$trt=="ungrazed"], chemi$lg_K[,1][chemi$trt=="ungrazed"]-chemi$lg_K[,2][chemi$trt=="ungrazed"], chemi$month[chemi$trt=="ungrazed"], chemi$lg_K[,1][chemi$trt=="ungrazed"]+chemi$lg_K[,2][chemi$trt=="ungrazed"],col="dodgerblue",lwd=2,length=0.05, angle=90, code=3)
+points(chemi$lg_K[,1][chemi$trt=="ungrazed"] ~ chemi$month[chemi$trt=="ungrazed"],pch=23,col=t_col("dodgerblue", perc = 40),bg=t_col("dodgerblue", perc = 40),cex=2)
+points(mo_e$fit ~ mo_e$month,type="l",col=t_col("dodgerblue", perc = 40),lwd=2)
+arrows(chemi$month[chemi$trt=="ungrazed"], chemi$lg_K[,1][chemi$trt=="ungrazed"]-chemi$lg_K[,2][chemi$trt=="ungrazed"], chemi$month[chemi$trt=="ungrazed"], chemi$lg_K[,1][chemi$trt=="ungrazed"]+chemi$lg_K[,2][chemi$trt=="ungrazed"],col=t_col("dodgerblue", perc = 40),lwd=2,length=0.05, angle=90, code=3)
 
 ##trtpd
 cm <- lmer(lg_K ~ month + (1|site), data=tp)
@@ -247,9 +247,9 @@ mo_e <- data.frame(mo_e)
 # add fill
 ##polygon(c(rev(mo_e$month), mo_e$month), c(rev(mo_e$upper), mo_e$lower), col=t_col("firebrick2", perc = 70), border = NA)
 #points
-points(chemi$lg_K[,1][chemi$trt=="trtpd"] ~ chemi$month[chemi$trt=="trtpd"],pch=24,col="firebrick2",bg="firebrick2",cex=2)
-#points(mo_e$fit ~ mo_e$month,type="l",col="firebrick2",lwd=2)
-arrows(chemi$month[chemi$trt=="trtpd"], chemi$lg_K[,1][chemi$trt=="trtpd"]-chemi$lg_K[,2][chemi$trt=="trtpd"], chemi$month[chemi$trt=="trtpd"], chemi$lg_K[,1][chemi$trt=="trtpd"]+chemi$lg_K[,2][chemi$trt=="trtpd"],col="firebrick2",lwd=2,length=0.05, angle=90, code=3)
+points(chemi$lg_K[,1][chemi$trt=="trtpd"] ~ chemi$month[chemi$trt=="trtpd"],pch=24,col=t_col("firebrick2", perc = 40),bg=t_col("firebrick2", perc = 40),cex=2)
+#points(mo_e$fit ~ mo_e$month,type="l",col=t_col("firebrick2", perc = 40),lwd=2)
+arrows(chemi$month[chemi$trt=="trtpd"], chemi$lg_K[,1][chemi$trt=="trtpd"]-chemi$lg_K[,2][chemi$trt=="trtpd"], chemi$month[chemi$trt=="trtpd"], chemi$lg_K[,1][chemi$trt=="trtpd"]+chemi$lg_K[,2][chemi$trt=="trtpd"],col=t_col("firebrick2", perc = 40),lwd=2,length=0.05, angle=90, code=3)
 
 ##untrtpd
 cm <- lmer(lg_K ~ month + (1|site), data=pd)
@@ -258,9 +258,9 @@ mo_e <- data.frame(mo_e)
 # add fill
 #polygon(c(rev(mo_e$month), mo_e$month), c(rev(mo_e$upper), mo_e$lower), col=t_col("goldenrod2", perc = 70), border = NA)
 #points
-points(chemi$lg_K[,1][chemi$trt=="untrtpd"] ~ chemi$month[chemi$trt=="untrtpd"],pch=25,col="goldenrod2",bg="goldenrod2",cex=2)
-points(mo_e$fit ~ mo_e$month,type="l",col="goldenrod2",lwd=2)
-arrows(chemi$month[chemi$trt=="untrtpd"], chemi$lg_K[,1][chemi$trt=="untrtpd"]-chemi$lg_K[,2][chemi$trt=="untrtpd"], chemi$month[chemi$trt=="untrtpd"], chemi$lg_K[,1][chemi$trt=="untrtpd"]+chemi$lg_K[,2][chemi$trt=="untrtpd"],col="goldenrod2",lwd=2,length=0.05, angle=90, code=3)
+points(chemi$lg_K[,1][chemi$trt=="untrtpd"] ~ chemi$month[chemi$trt=="untrtpd"],pch=25,col=t_col("goldenrod2", perc = 40),bg=t_col("goldenrod2", perc = 40),cex=2)
+points(mo_e$fit ~ mo_e$month,type="l",col=t_col("goldenrod2", perc = 40),lwd=2)
+arrows(chemi$month[chemi$trt=="untrtpd"], chemi$lg_K[,1][chemi$trt=="untrtpd"]-chemi$lg_K[,2][chemi$trt=="untrtpd"], chemi$month[chemi$trt=="untrtpd"], chemi$lg_K[,1][chemi$trt=="untrtpd"]+chemi$lg_K[,2][chemi$trt=="untrtpd"],col=t_col("goldenrod2", perc = 40),lwd=2,length=0.05, angle=90, code=3)
 
 legend("topright", legend=("C"), bty="n", cex=1.5)
 
@@ -271,10 +271,10 @@ nut <- na.omit(est$lg_Mg)
 min(nut)
 max(nut)
 plot(1, type="n", xlim=c(5.9,9.1), ylim=c(2.7,3.5), ylab="",xlab="", xaxt='n', yaxt='n')
-axis(2, at=c(log10(500),log10(1000),log10(1500),log10(2000),log10(2500)), labels=c(500,1000,1500,2000,2500),las=1)
+axis(2, at=c(log10(500),log10(750),log10(1000),log10(1500),log10(2000),log10(2500),log10(3000)), labels=c(500,750,1000,1500,2000,2500,3000),las=1)
 axis(1, at=c(6,7,8,9),cex.axis=1,labels=c("Jun","Jul","Aug","Sept"))
 box(lwd=2)
-title(ylab="Grass ppm Mg", line=3, cex.lab=1.6)
+title(ylab="Grass ppm Mg", line=3.5, cex.lab=1.6)
 
 ##bison
 cm <- lmer(lg_Mg ~ month + (1|site), data=b)
@@ -283,9 +283,9 @@ mo_e <- data.frame(mo_e)
 # add fill
 #polygon(c(rev(mo_e$month), mo_e$month), c(rev(mo_e$upper), mo_e$lower), col=t_col("sienna", perc = 70), border = NA)
 #points
-points(chemi$lg_Mg[,1][chemi$trt=="bison"] ~ chemi$month[chemi$trt=="bison"],pch=21,col="sienna",bg="sienna",cex=2)
-points(mo_e$fit ~ mo_e$month,type="l",col="sienna",lwd=2)
-arrows(chemi$month[chemi$trt=="bison"], chemi$lg_Mg[,1][chemi$trt=="bison"]-chemi$lg_Mg[,2][chemi$trt=="bison"], chemi$month[chemi$trt=="bison"], chemi$lg_Mg[,1][chemi$trt=="bison"]+chemi$lg_Mg[,2][chemi$trt=="bison"],col="sienna",lwd=2,length=0.05, angle=90, code=3)
+points(chemi$lg_Mg[,1][chemi$trt=="bison"] ~ chemi$month[chemi$trt=="bison"],pch=21,col=t_col("sienna", perc = 40),bg=t_col("sienna", perc = 40),cex=2)
+points(mo_e$fit ~ mo_e$month,type="l",col=t_col("sienna", perc = 40),lwd=2)
+arrows(chemi$month[chemi$trt=="bison"], chemi$lg_Mg[,1][chemi$trt=="bison"]-chemi$lg_Mg[,2][chemi$trt=="bison"], chemi$month[chemi$trt=="bison"], chemi$lg_Mg[,1][chemi$trt=="bison"]+chemi$lg_Mg[,2][chemi$trt=="bison"],col=t_col("sienna", perc = 40),lwd=2,length=0.05, angle=90, code=3)
 
 ##cattle
 cm <- lmer(lg_Mg ~ month + (1|site), data=ca)
@@ -294,9 +294,9 @@ mo_e <- data.frame(mo_e)
 # add fill
 #polygon(c(rev(mo_e$month), mo_e$month), c(rev(mo_e$upper), mo_e$lower), col=t_col("gray0", perc = 70), border = NA)
 #points
-points(chemi$lg_Mg[,1][chemi$trt=="cattle"] ~ chemi$month[chemi$trt=="cattle"],pch=22,col="gray0",bg="gray0",cex=2)
-points(mo_e$fit ~ mo_e$month,type="l",col="gray0",lwd=2)
-arrows(chemi$month[chemi$trt=="cattle"], chemi$lg_Mg[,1][chemi$trt=="cattle"]-chemi$lg_Mg[,2][chemi$trt=="cattle"], chemi$month[chemi$trt=="cattle"], chemi$lg_Mg[,1][chemi$trt=="cattle"]+chemi$lg_Mg[,2][chemi$trt=="cattle"],col="gray0",lwd=2,length=0.05, angle=90, code=3)
+points(chemi$lg_Mg[,1][chemi$trt=="cattle"] ~ chemi$month[chemi$trt=="cattle"],pch=22,col=t_col("gray0", perc = 40),bg=t_col("gray0", perc = 40),cex=2)
+points(mo_e$fit ~ mo_e$month,type="l",col=t_col("gray0", perc = 40),lwd=2, lty=2)
+arrows(chemi$month[chemi$trt=="cattle"], chemi$lg_Mg[,1][chemi$trt=="cattle"]-chemi$lg_Mg[,2][chemi$trt=="cattle"], chemi$month[chemi$trt=="cattle"], chemi$lg_Mg[,1][chemi$trt=="cattle"]+chemi$lg_Mg[,2][chemi$trt=="cattle"],col=t_col("gray0", perc = 40),lwd=2,length=0.05, angle=90, code=3)
 
 ##ungrazed
 cm <- lmer(lg_Mg ~ month + (1|site), data=un)
@@ -305,9 +305,9 @@ mo_e <- data.frame(mo_e)
 # add fill
 #polygon(c(rev(mo_e$month), mo_e$month), c(rev(mo_e$upper), mo_e$lower), col=t_col("dodgerblue", perc = 70), border = NA)
 #points
-points(chemi$lg_Mg[,1][chemi$trt=="ungrazed"] ~ chemi$month[chemi$trt=="ungrazed"],pch=23,col="dodgerblue",bg="dodgerblue",cex=2)
-points(mo_e$fit ~ mo_e$month,type="l",col="dodgerblue",lwd=2)
-arrows(chemi$month[chemi$trt=="ungrazed"], chemi$lg_Mg[,1][chemi$trt=="ungrazed"]-chemi$lg_Mg[,2][chemi$trt=="ungrazed"], chemi$month[chemi$trt=="ungrazed"], chemi$lg_Mg[,1][chemi$trt=="ungrazed"]+chemi$lg_Mg[,2][chemi$trt=="ungrazed"],col="dodgerblue",lwd=2,length=0.05, angle=90, code=3)
+points(chemi$lg_Mg[,1][chemi$trt=="ungrazed"] ~ chemi$month[chemi$trt=="ungrazed"],pch=23,col=t_col("dodgerblue", perc = 40),bg=t_col("dodgerblue", perc = 40),cex=2)
+points(mo_e$fit ~ mo_e$month,type="l",col=t_col("dodgerblue", perc = 40),lwd=2, lty=2)
+arrows(chemi$month[chemi$trt=="ungrazed"], chemi$lg_Mg[,1][chemi$trt=="ungrazed"]-chemi$lg_Mg[,2][chemi$trt=="ungrazed"], chemi$month[chemi$trt=="ungrazed"], chemi$lg_Mg[,1][chemi$trt=="ungrazed"]+chemi$lg_Mg[,2][chemi$trt=="ungrazed"],col=t_col("dodgerblue", perc = 40),lwd=2,length=0.05, angle=90, code=3)
 
 ##trtpd
 cm <- lmer(lg_Mg ~ month + (1|site), data=tp)
@@ -316,9 +316,9 @@ mo_e <- data.frame(mo_e)
 # add fill
 ##polygon(c(rev(mo_e$month), mo_e$month), c(rev(mo_e$upper), mo_e$lower), col=t_col("firebrick2", perc = 70), border = NA)
 #points
-points(chemi$lg_Mg[,1][chemi$trt=="trtpd"] ~ chemi$month[chemi$trt=="trtpd"],pch=24,col="firebrick2",bg="firebrick2",cex=2)
-#points(mo_e$fit ~ mo_e$month,type="l",col="firebrick2",lwd=2)
-arrows(chemi$month[chemi$trt=="trtpd"], chemi$lg_Mg[,1][chemi$trt=="trtpd"]-chemi$lg_Mg[,2][chemi$trt=="trtpd"], chemi$month[chemi$trt=="trtpd"], chemi$lg_Mg[,1][chemi$trt=="trtpd"]+chemi$lg_Mg[,2][chemi$trt=="trtpd"],col="firebrick2",lwd=2,length=0.05, angle=90, code=3)
+points(chemi$lg_Mg[,1][chemi$trt=="trtpd"] ~ chemi$month[chemi$trt=="trtpd"],pch=24,col=t_col("firebrick2", perc = 40),bg=t_col("firebrick2", perc = 40),cex=2)
+#points(mo_e$fit ~ mo_e$month,type="l",col=t_col("firebrick2", perc = 40),lwd=2, lty=2)
+arrows(chemi$month[chemi$trt=="trtpd"], chemi$lg_Mg[,1][chemi$trt=="trtpd"]-chemi$lg_Mg[,2][chemi$trt=="trtpd"], chemi$month[chemi$trt=="trtpd"], chemi$lg_Mg[,1][chemi$trt=="trtpd"]+chemi$lg_Mg[,2][chemi$trt=="trtpd"],col=t_col("firebrick2", perc = 40),lwd=2,length=0.05, angle=90, code=3)
 
 ##untrtpd
 cm <- lmer(lg_Mg ~ month + (1|site), data=pd)
@@ -327,9 +327,9 @@ mo_e <- data.frame(mo_e)
 # add fill
 #polygon(c(rev(mo_e$month), mo_e$month), c(rev(mo_e$upper), mo_e$lower), col=t_col("goldenrod2", perc = 70), border = NA)
 #points
-points(chemi$lg_Mg[,1][chemi$trt=="untrtpd"] ~ chemi$month[chemi$trt=="untrtpd"],pch=25,col="goldenrod2",bg="goldenrod2",cex=2)
-points(mo_e$fit ~ mo_e$month,type="l",col="goldenrod2",lwd=2)
-arrows(chemi$month[chemi$trt=="untrtpd"], chemi$lg_Mg[,1][chemi$trt=="untrtpd"]-chemi$lg_Mg[,2][chemi$trt=="untrtpd"], chemi$month[chemi$trt=="untrtpd"], chemi$lg_Mg[,1][chemi$trt=="untrtpd"]+chemi$lg_Mg[,2][chemi$trt=="untrtpd"],col="goldenrod2",lwd=2,length=0.05, angle=90, code=3)
+points(chemi$lg_Mg[,1][chemi$trt=="untrtpd"] ~ chemi$month[chemi$trt=="untrtpd"],pch=25,col=t_col("goldenrod2", perc = 40),bg=t_col("goldenrod2", perc = 40),cex=2)
+points(mo_e$fit ~ mo_e$month,type="l",col=t_col("goldenrod2", perc = 40),lwd=2, lty=2)
+arrows(chemi$month[chemi$trt=="untrtpd"], chemi$lg_Mg[,1][chemi$trt=="untrtpd"]-chemi$lg_Mg[,2][chemi$trt=="untrtpd"], chemi$month[chemi$trt=="untrtpd"], chemi$lg_Mg[,1][chemi$trt=="untrtpd"]+chemi$lg_Mg[,2][chemi$trt=="untrtpd"],col=t_col("goldenrod2", perc = 40),lwd=2,length=0.05, angle=90, code=3)
 
 legend("topright", legend=("D"), bty="n", cex=1.5)
 
@@ -342,7 +342,7 @@ plot(1, type="n", xlim=c(5.9,9.1), ylim=c(3.08,3.34), ylab="",xlab="", xaxt='n',
 axis(2, at=c(log10(1200),log10(1400),log10(1600),log10(1800),log10(2000)), labels=c(1200,1400,1600,1800,2000),las=1)
 axis(1, at=c(6,7,8,9),cex.axis=1,labels=c("Jun","Jul","Aug","Sept"))
 box(lwd=2)
-title(ylab="Grass ppm Na", line=3, cex.lab=1.6)
+title(ylab="Grass ppm Na", line=3.5, cex.lab=1.6)
 ##bison
 cm <- lmer(lg_Na ~ month + (1|site), data=b)
 mo_e <- Effect("month", partial.residuals=T, cm)
@@ -350,9 +350,9 @@ mo_e <- data.frame(mo_e)
 # add fill
 #polygon(c(rev(mo_e$month), mo_e$month), c(rev(mo_e$upper), mo_e$lower), col=t_col("sienna", perc = 70), border = NA)
 #points
-points(chemi$lg_Na[,1][chemi$trt=="bison"] ~ chemi$month[chemi$trt=="bison"],pch=21,col="sienna",bg="sienna",cex=2)
-points(mo_e$fit ~ mo_e$month,type="l",col="sienna",lwd=2)
-arrows(chemi$month[chemi$trt=="bison"], chemi$lg_Na[,1][chemi$trt=="bison"]-chemi$lg_Na[,2][chemi$trt=="bison"], chemi$month[chemi$trt=="bison"], chemi$lg_Na[,1][chemi$trt=="bison"]+chemi$lg_Na[,2][chemi$trt=="bison"],col="sienna",lwd=2,length=0.05, angle=90, code=3)
+points(chemi$lg_Na[,1][chemi$trt=="bison"] ~ chemi$month[chemi$trt=="bison"],pch=21,col=t_col("sienna", perc = 40),bg=t_col("sienna", perc = 40),cex=2)
+points(mo_e$fit ~ mo_e$month,type="l",col=t_col("sienna", perc = 40),lwd=2, lty=2)
+arrows(chemi$month[chemi$trt=="bison"], chemi$lg_Na[,1][chemi$trt=="bison"]-chemi$lg_Na[,2][chemi$trt=="bison"], chemi$month[chemi$trt=="bison"], chemi$lg_Na[,1][chemi$trt=="bison"]+chemi$lg_Na[,2][chemi$trt=="bison"],col=t_col("sienna", perc = 40),lwd=2,length=0.05, angle=90, code=3)
 
 ##cattle
 cm <- lmer(lg_Na ~ month + (1|site), data=ca)
@@ -361,9 +361,9 @@ mo_e <- data.frame(mo_e)
 # add fill
 #polygon(c(rev(mo_e$month), mo_e$month), c(rev(mo_e$upper), mo_e$lower), col=t_col("gray0", perc = 70), border = NA)
 #points
-points(chemi$lg_Na[,1][chemi$trt=="cattle"] ~ chemi$month[chemi$trt=="cattle"],pch=22,col="gray0",bg="gray0",cex=2)
-points(mo_e$fit ~ mo_e$month,type="l",col="gray0",lwd=2)
-arrows(chemi$month[chemi$trt=="cattle"], chemi$lg_Na[,1][chemi$trt=="cattle"]-chemi$lg_Na[,2][chemi$trt=="cattle"], chemi$month[chemi$trt=="cattle"], chemi$lg_Na[,1][chemi$trt=="cattle"]+chemi$lg_Na[,2][chemi$trt=="cattle"],col="gray0",lwd=2,length=0.05, angle=90, code=3)
+points(chemi$lg_Na[,1][chemi$trt=="cattle"] ~ chemi$month[chemi$trt=="cattle"],pch=22,col=t_col("gray0", perc = 40),bg=t_col("gray0", perc = 40),cex=2)
+points(mo_e$fit ~ mo_e$month,type="l",col=t_col("gray0", perc = 40),lwd=2)
+arrows(chemi$month[chemi$trt=="cattle"], chemi$lg_Na[,1][chemi$trt=="cattle"]-chemi$lg_Na[,2][chemi$trt=="cattle"], chemi$month[chemi$trt=="cattle"], chemi$lg_Na[,1][chemi$trt=="cattle"]+chemi$lg_Na[,2][chemi$trt=="cattle"],col=t_col("gray0", perc = 40),lwd=2,length=0.05, angle=90, code=3)
 
 ##ungrazed
 cm <- lmer(lg_Na ~ month + (1|site), data=un)
@@ -372,9 +372,9 @@ mo_e <- data.frame(mo_e)
 # add fill
 #polygon(c(rev(mo_e$month), mo_e$month), c(rev(mo_e$upper), mo_e$lower), col=t_col("dodgerblue", perc = 70), border = NA)
 #points
-points(chemi$lg_Na[,1][chemi$trt=="ungrazed"] ~ chemi$month[chemi$trt=="ungrazed"],pch=23,col="dodgerblue",bg="dodgerblue",cex=2)
-points(mo_e$fit ~ mo_e$month,type="l",col="dodgerblue",lwd=2)
-arrows(chemi$month[chemi$trt=="ungrazed"], chemi$lg_Na[,1][chemi$trt=="ungrazed"]-chemi$lg_Na[,2][chemi$trt=="ungrazed"], chemi$month[chemi$trt=="ungrazed"], chemi$lg_Na[,1][chemi$trt=="ungrazed"]+chemi$lg_Na[,2][chemi$trt=="ungrazed"],col="dodgerblue",lwd=2,length=0.05, angle=90, code=3)
+points(chemi$lg_Na[,1][chemi$trt=="ungrazed"] ~ chemi$month[chemi$trt=="ungrazed"],pch=23,col=t_col("dodgerblue", perc = 40),bg=t_col("dodgerblue", perc = 40),cex=2)
+points(mo_e$fit ~ mo_e$month,type="l",col=t_col("dodgerblue", perc = 40),lwd=2, lty=2)
+arrows(chemi$month[chemi$trt=="ungrazed"], chemi$lg_Na[,1][chemi$trt=="ungrazed"]-chemi$lg_Na[,2][chemi$trt=="ungrazed"], chemi$month[chemi$trt=="ungrazed"], chemi$lg_Na[,1][chemi$trt=="ungrazed"]+chemi$lg_Na[,2][chemi$trt=="ungrazed"],col=t_col("dodgerblue", perc = 40),lwd=2,length=0.05, angle=90, code=3)
 
 ##trtpd
 cm <- lmer(lg_Na ~ month + (1|site), data=tp)
@@ -383,9 +383,9 @@ mo_e <- data.frame(mo_e)
 # add fill
 ##polygon(c(rev(mo_e$month), mo_e$month), c(rev(mo_e$upper), mo_e$lower), col=t_col("firebrick2", perc = 70), border = NA)
 #points
-points(chemi$lg_Na[,1][chemi$trt=="trtpd"] ~ chemi$month[chemi$trt=="trtpd"],pch=24,col="firebrick2",bg="firebrick2",cex=2)
-#points(mo_e$fit ~ mo_e$month,type="l",col="firebrick2",lwd=2)
-arrows(chemi$month[chemi$trt=="trtpd"], chemi$lg_Na[,1][chemi$trt=="trtpd"]-chemi$lg_Na[,2][chemi$trt=="trtpd"], chemi$month[chemi$trt=="trtpd"], chemi$lg_Na[,1][chemi$trt=="trtpd"]+chemi$lg_Na[,2][chemi$trt=="trtpd"],col="firebrick2",lwd=2,length=0.05, angle=90, code=3)
+points(chemi$lg_Na[,1][chemi$trt=="trtpd"] ~ chemi$month[chemi$trt=="trtpd"],pch=24,col=t_col("firebrick2", perc = 40),bg=t_col("firebrick2", perc = 40),cex=2)
+#points(mo_e$fit ~ mo_e$month,type="l",col=t_col("firebrick2", perc = 40),lwd=2, lty=2)
+arrows(chemi$month[chemi$trt=="trtpd"], chemi$lg_Na[,1][chemi$trt=="trtpd"]-chemi$lg_Na[,2][chemi$trt=="trtpd"], chemi$month[chemi$trt=="trtpd"], chemi$lg_Na[,1][chemi$trt=="trtpd"]+chemi$lg_Na[,2][chemi$trt=="trtpd"],col=t_col("firebrick2", perc = 40),lwd=2,length=0.05, angle=90, code=3)
 
 ##untrtpd
 cm <- lmer(lg_Na ~ month + (1|site), data=pd)
@@ -394,9 +394,9 @@ mo_e <- data.frame(mo_e)
 # add fill
 #polygon(c(rev(mo_e$month), mo_e$month), c(rev(mo_e$upper), mo_e$lower), col=t_col("goldenrod2", perc = 70), border = NA)
 #points
-points(chemi$lg_Na[,1][chemi$trt=="untrtpd"] ~ chemi$month[chemi$trt=="untrtpd"],pch=25,col="goldenrod2",bg="goldenrod2",cex=2)
-points(mo_e$fit ~ mo_e$month,type="l",col="goldenrod2",lwd=2)
-arrows(chemi$month[chemi$trt=="untrtpd"], chemi$lg_Na[,1][chemi$trt=="untrtpd"]-chemi$lg_Na[,2][chemi$trt=="untrtpd"], chemi$month[chemi$trt=="untrtpd"], chemi$lg_Na[,1][chemi$trt=="untrtpd"]+chemi$lg_Na[,2][chemi$trt=="untrtpd"],col="goldenrod2",lwd=2,length=0.05, angle=90, code=3)
+points(chemi$lg_Na[,1][chemi$trt=="untrtpd"] ~ chemi$month[chemi$trt=="untrtpd"],pch=25,col=t_col("goldenrod2", perc = 40),bg=t_col("goldenrod2", perc = 40),cex=2)
+points(mo_e$fit ~ mo_e$month,type="l",col=t_col("goldenrod2", perc = 40),lwd=2, lty=2)
+arrows(chemi$month[chemi$trt=="untrtpd"], chemi$lg_Na[,1][chemi$trt=="untrtpd"]-chemi$lg_Na[,2][chemi$trt=="untrtpd"], chemi$month[chemi$trt=="untrtpd"], chemi$lg_Na[,1][chemi$trt=="untrtpd"]+chemi$lg_Na[,2][chemi$trt=="untrtpd"],col=t_col("goldenrod2", perc = 40),lwd=2,length=0.05, angle=90, code=3)
 
 legend("topright", legend=("E"), bty="n", cex=1.5)
 
@@ -413,7 +413,7 @@ plot(1, type="n", xlim=c(5.9,9.1), ylim=c(1.5,3.5), ylab="",xlab="", xaxt='n', y
 axis(2, at=c(log10(50),log10(100),log10(200),log10(500),log10(1000),log10(2000)), labels=c(50,100,200,500,1000,2000),las=1)
 axis(1, at=c(6,7,8,9),cex.axis=1,labels=c("Jun","Jul","Aug","Sept"))
 box(lwd=2)
-title(ylab="Grass ppm Na", line=3, cex.lab=1.6)
+title(ylab="Grass ppm Si", line=3.5, cex.lab=1.6)
 ##bison
 cm <- lmer(lg_Si ~ month + (1|site), data=b)
 mo_e <- Effect("month", partial.residuals=T, cm)
@@ -421,9 +421,9 @@ mo_e <- data.frame(mo_e)
 # add fill
 #polygon(c(rev(mo_e$month), mo_e$month), c(rev(mo_e$upper), mo_e$lower), col=t_col("sienna", perc = 70), border = NA)
 #points
-points(chemi$lg_Si[,1][chemi$trt=="bison"] ~ chemi$month[chemi$trt=="bison"],pch=21,col="sienna",bg="sienna",cex=2)
-points(mo_e$fit ~ mo_e$month,type="l",col="sienna",lwd=2)
-arrows(chemi$month[chemi$trt=="bison"], chemi$lg_Si[,1][chemi$trt=="bison"]-chemi$lg_Si[,2][chemi$trt=="bison"], chemi$month[chemi$trt=="bison"], chemi$lg_Si[,1][chemi$trt=="bison"]+chemi$lg_Si[,2][chemi$trt=="bison"],col="sienna",lwd=2,length=0.05, angle=90, code=3)
+points(chemi$lg_Si[,1][chemi$trt=="bison"] ~ chemi$month[chemi$trt=="bison"],pch=21,col=t_col("sienna", perc = 40),bg=t_col("sienna", perc = 40),cex=2)
+points(mo_e$fit ~ mo_e$month,type="l",col=t_col("sienna", perc = 40),lwd=2)
+arrows(chemi$month[chemi$trt=="bison"], chemi$lg_Si[,1][chemi$trt=="bison"]-chemi$lg_Si[,2][chemi$trt=="bison"], chemi$month[chemi$trt=="bison"], chemi$lg_Si[,1][chemi$trt=="bison"]+chemi$lg_Si[,2][chemi$trt=="bison"],col=t_col("sienna", perc = 40),lwd=2,length=0.05, angle=90, code=3)
 
 ##cattle
 cm <- lmer(lg_Si ~ month + (1|site), data=ca)
@@ -432,9 +432,9 @@ mo_e <- data.frame(mo_e)
 # add fill
 #polygon(c(rev(mo_e$month), mo_e$month), c(rev(mo_e$upper), mo_e$lower), col=t_col("gray0", perc = 70), border = NA)
 #points
-points(chemi$lg_Si[,1][chemi$trt=="cattle"] ~ chemi$month[chemi$trt=="cattle"],pch=22,col="gray0",bg="gray0",cex=2)
-points(mo_e$fit ~ mo_e$month,type="l",col="gray0",lwd=2)
-arrows(chemi$month[chemi$trt=="cattle"], chemi$lg_Si[,1][chemi$trt=="cattle"]-chemi$lg_Si[,2][chemi$trt=="cattle"], chemi$month[chemi$trt=="cattle"], chemi$lg_Si[,1][chemi$trt=="cattle"]+chemi$lg_Si[,2][chemi$trt=="cattle"],col="gray0",lwd=2,length=0.05, angle=90, code=3)
+points(chemi$lg_Si[,1][chemi$trt=="cattle"] ~ chemi$month[chemi$trt=="cattle"],pch=22,col=t_col("gray0", perc = 40),bg=t_col("gray0", perc = 40),cex=2)
+points(mo_e$fit ~ mo_e$month,type="l",col=t_col("gray0", perc = 40),lwd=2)
+arrows(chemi$month[chemi$trt=="cattle"], chemi$lg_Si[,1][chemi$trt=="cattle"]-chemi$lg_Si[,2][chemi$trt=="cattle"], chemi$month[chemi$trt=="cattle"], chemi$lg_Si[,1][chemi$trt=="cattle"]+chemi$lg_Si[,2][chemi$trt=="cattle"],col=t_col("gray0", perc = 40),lwd=2,length=0.05, angle=90, code=3)
 
 ##ungrazed
 cm <- lmer(lg_Si ~ month + (1|site), data=un)
@@ -443,9 +443,9 @@ mo_e <- data.frame(mo_e)
 # add fill
 #polygon(c(rev(mo_e$month), mo_e$month), c(rev(mo_e$upper), mo_e$lower), col=t_col("dodgerblue", perc = 70), border = NA)
 #points
-points(chemi$lg_Si[,1][chemi$trt=="ungrazed"] ~ chemi$month[chemi$trt=="ungrazed"],pch=23,col="dodgerblue",bg="dodgerblue",cex=2)
-points(mo_e$fit ~ mo_e$month,type="l",col="dodgerblue",lwd=2)
-arrows(chemi$month[chemi$trt=="ungrazed"], chemi$lg_Si[,1][chemi$trt=="ungrazed"]-chemi$lg_Si[,2][chemi$trt=="ungrazed"], chemi$month[chemi$trt=="ungrazed"], chemi$lg_Si[,1][chemi$trt=="ungrazed"]+chemi$lg_Si[,2][chemi$trt=="ungrazed"],col="dodgerblue",lwd=2,length=0.05, angle=90, code=3)
+points(chemi$lg_Si[,1][chemi$trt=="ungrazed"] ~ chemi$month[chemi$trt=="ungrazed"],pch=23,col=t_col("dodgerblue", perc = 40),bg=t_col("dodgerblue", perc = 40),cex=2)
+points(mo_e$fit ~ mo_e$month,type="l",col=t_col("dodgerblue", perc = 40),lwd=2)
+arrows(chemi$month[chemi$trt=="ungrazed"], chemi$lg_Si[,1][chemi$trt=="ungrazed"]-chemi$lg_Si[,2][chemi$trt=="ungrazed"], chemi$month[chemi$trt=="ungrazed"], chemi$lg_Si[,1][chemi$trt=="ungrazed"]+chemi$lg_Si[,2][chemi$trt=="ungrazed"],col=t_col("dodgerblue", perc = 40),lwd=2,length=0.05, angle=90, code=3)
 
 ##trtpd
 cm <- lmer(lg_Si ~ month + (1|site), data=tp)
@@ -454,9 +454,9 @@ mo_e <- data.frame(mo_e)
 # add fill
 ##polygon(c(rev(mo_e$month), mo_e$month), c(rev(mo_e$upper), mo_e$lower), col=t_col("firebrick2", perc = 70), border = NA)
 #points
-points(chemi$lg_Si[,1][chemi$trt=="trtpd"] ~ chemi$month[chemi$trt=="trtpd"],pch=24,col="firebrick2",bg="firebrick2",cex=2)
-#points(mo_e$fit ~ mo_e$month,type="l",col="firebrick2",lwd=2)
-arrows(chemi$month[chemi$trt=="trtpd"], chemi$lg_Si[,1][chemi$trt=="trtpd"]-chemi$lg_Si[,2][chemi$trt=="trtpd"], chemi$month[chemi$trt=="trtpd"], chemi$lg_Si[,1][chemi$trt=="trtpd"]+chemi$lg_Si[,2][chemi$trt=="trtpd"],col="firebrick2",lwd=2,length=0.05, angle=90, code=3)
+points(chemi$lg_Si[,1][chemi$trt=="trtpd"] ~ chemi$month[chemi$trt=="trtpd"],pch=24,col=t_col("firebrick2", perc = 40),bg=t_col("firebrick2", perc = 40),cex=2)
+#points(mo_e$fit ~ mo_e$month,type="l",col=t_col("firebrick2", perc = 40),lwd=2)
+arrows(chemi$month[chemi$trt=="trtpd"], chemi$lg_Si[,1][chemi$trt=="trtpd"]-chemi$lg_Si[,2][chemi$trt=="trtpd"], chemi$month[chemi$trt=="trtpd"], chemi$lg_Si[,1][chemi$trt=="trtpd"]+chemi$lg_Si[,2][chemi$trt=="trtpd"],col=t_col("firebrick2", perc = 40),lwd=2,length=0.05, angle=90, code=3)
 
 ##untrtpd
 cm <- lmer(lg_Si ~ month + (1|site), data=pd)
@@ -465,9 +465,9 @@ mo_e <- data.frame(mo_e)
 # add fill
 #polygon(c(rev(mo_e$month), mo_e$month), c(rev(mo_e$upper), mo_e$lower), col=t_col("goldenrod2", perc = 70), border = NA)
 #points
-points(chemi$lg_Si[,1][chemi$trt=="untrtpd"] ~ chemi$month[chemi$trt=="untrtpd"],pch=25,col="goldenrod2",bg="goldenrod2",cex=2)
-points(mo_e$fit ~ mo_e$month,type="l",col="goldenrod2",lwd=2)
-arrows(chemi$month[chemi$trt=="untrtpd"], chemi$lg_Si[,1][chemi$trt=="untrtpd"]-chemi$lg_Si[,2][chemi$trt=="untrtpd"], chemi$month[chemi$trt=="untrtpd"], chemi$lg_Si[,1][chemi$trt=="untrtpd"]+chemi$lg_Si[,2][chemi$trt=="untrtpd"],col="goldenrod2",lwd=2,length=0.05, angle=90, code=3)
+points(chemi$lg_Si[,1][chemi$trt=="untrtpd"] ~ chemi$month[chemi$trt=="untrtpd"],pch=25,col=t_col("goldenrod2", perc = 40),bg=t_col("goldenrod2", perc = 40),cex=2)
+points(mo_e$fit ~ mo_e$month,type="l",col=t_col("goldenrod2", perc = 40),lwd=2)
+arrows(chemi$month[chemi$trt=="untrtpd"], chemi$lg_Si[,1][chemi$trt=="untrtpd"]-chemi$lg_Si[,2][chemi$trt=="untrtpd"], chemi$month[chemi$trt=="untrtpd"], chemi$lg_Si[,1][chemi$trt=="untrtpd"]+chemi$lg_Si[,2][chemi$trt=="untrtpd"],col=t_col("goldenrod2", perc = 40),lwd=2,length=0.05, angle=90, code=3)
 
 legend("topright", legend=("F"), bty="n", cex=1.5)
 ##
