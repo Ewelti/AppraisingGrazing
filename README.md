@@ -103,28 +103,28 @@ bison, cattle, prairie dog, and insecticide effects on plant biomass and plant a
 ## plots file:
 
 #### ***ForbChem_individualPlots.tif*** :
-*main results figure (Fig. 2) showing responses of forb concentrations of %N, ppm P, ppm K, ppm Mg, ppm Na, and ppm Si to different grazing regimes and over the four sampling months (June-September)
+* main results figure (Fig. 2) showing responses of forb concentrations of %N, ppm P, ppm K, ppm Mg, ppm Na, and ppm Si to different grazing regimes and over the four sampling months (June-September)
 
 #### ***ForbChem_plots.R*** :
-*R script to make the figure ForbChem_individualPlots.tif
+* R script to make the figure ForbChem_individualPlots.tif
 
 #### ***GrassChem_individualPlots.tif*** :
-*main results figure (Fig. 1) showing responses of grass concentrations of %N, ppm P, ppm K, ppm Mg, ppm Na, and ppm Si to different grazing regimes and over the four sampling months (June-September)
+* main results figure (Fig. 1) showing responses of grass concentrations of %N, ppm P, ppm K, ppm Mg, ppm Na, and ppm Si to different grazing regimes and over the four sampling months (June-September)
 
 #### ***GrassChem_plots.R*** :
-*R script to make the figure GrassChem_individualPlots.tif
+* R script to make the figure GrassChem_individualPlots.tif
 
 #### ***PastureMeter.tif*** :
-*main results figure (Fig. 4) showing responses of aboveground plant biomass to different grazing regimes and over the four sampling months (June-September)
+* main results figure (Fig. 4) showing responses of aboveground plant biomass to different grazing regimes and over the four sampling months (June-September)
 
 #### ***PastureMeterEsts_Plot.R*** :
-*R script to make the figure PastureMeter.tif
+* R script to make the figure PastureMeter.tif
 
 #### ***sites2022_Rebh.tiff*** :
-*site map
+* site map
 
 #### ***SoilChem_individualPlots.tif*** :
-*main results figure (Fig. 4) showing responses of soil concentrations of %C, %N, ppm P, ppm K, ppm Mg, and ppm Na to different grazing regimes and over the four sampling months (June-September)
+* main results figure (Fig. 4) showing responses of soil concentrations of %C, %N, ppm P, ppm K, ppm Mg, and ppm Na to different grazing regimes and over the four sampling months (June-September)
 
 #### ***SoilChem_plots.R*** :
-*R script to make the figure SoilChem_individualPlots.tif
+* R script to make the figure SoilChem_individualPlots.tif
