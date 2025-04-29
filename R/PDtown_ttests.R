@@ -3,11 +3,6 @@ setwd("C:/Users/elwel/OneDrive/Desktop/AppraisingGrazing")
 ##Set working directory (Julie's computer)
 setwd("/Users/julierebh/Downloads/AppraisingGrazing")
 
-#########Hypotheses:
-##H1) Grazing will increase plant quality with smaller herbivores having larger effects 
-##H2) All grazers will decrease ANPP, and insect herbivory will equal that of large grazer herbivory
-##H3) Plant nutrient content will be greatest in the early season while biomass will peak mid-season
-
 ##load libraries
 #install.packages("lsr")
 library(rcompanion)
